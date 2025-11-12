@@ -19,6 +19,14 @@
       --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
     }
 
+    [data-theme="dark"] {
+      --white: #1F2937;
+      --bg-light: #111827;
+      --text-dark: #F9FAFB;
+      --text-gray: #D1D5DB;
+      --border: #374151;
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -669,6 +677,80 @@
     .star.filled {
       color: var(--gold);
     }
+
+    /* User Menu Dropdown */
+    .user-menu {
+      position: relative;
+    }
+
+    .user-menu-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--shadow-lg);
+      min-width: 200px;
+      display: none;
+      margin-top: 0.5rem;
+      z-index: 1000;
+    }
+
+    .user-menu-dropdown.show {
+      display: block;
+    }
+
+    .user-menu-item {
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background 0.2s;
+    }
+
+    .user-menu-item:last-child {
+      border-bottom: none;
+    }
+
+    .user-menu-item:hover {
+      background: var(--bg-light);
+    }
+
+    .profile-pic-preview {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--border);
+      cursor: pointer;
+      margin-bottom: 1rem;
+    }
+
+    .profile-pic-placeholder {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: var(--bg-light);
+      border: 3px dashed var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-bottom: 1rem;
+      font-size: 2rem;
+      color: var(--text-gray);
+    }
+
+    /* Category Filter */
+    .category-filter {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -703,12 +785,38 @@
           </svg>
           <span class="badge" id="cartBadge">0</span>
         </button>
-        <button class="icon-btn" onclick="toggleAuthMenu()" id="authBtn">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-            <circle cx="12" cy="7" r="4"/>
-          </svg>
-        </button>
+        <div class="user-menu">
+          <button class="icon-btn" onclick="toggleUserMenu()" id="authBtn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </button>
+          <div class="user-menu-dropdown" id="userMenuDropdown">
+            <div class="user-menu-item" onclick="showSection('orders'); toggleUserMenu()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+              </svg>
+              Orders
+            </div>
+            <div class="user-menu-item" onclick="showSection('settings'); toggleUserMenu()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M12 1v6m0 6v6m-9-9h6m6 0h6"/>
+              </svg>
+              Settings
+            </div>
+            <div class="user-menu-item" onclick="logout(); toggleUserMenu()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+              </svg>
+              Logout
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </header>
@@ -721,15 +829,6 @@
       </svg>
       <span>Home</span>
     </button>
-    <button class="nav-item" onclick="showSection('categories')">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="3" y="3" width="7" height="7"/>
-        <rect x="14" y="3" width="7" height="7"/>
-        <rect x="14" y="14" width="7" height="7"/>
-        <rect x="3" y="14" width="7" height="7"/>
-      </svg>
-      <span>Categories</span>
-    </button>
     <button class="nav-item" onclick="showSection('cart')">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="9" cy="21" r="1"/>
@@ -737,6 +836,15 @@
         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
       </svg>
       <span>Cart</span>
+    </button>
+        <button class="nav-item" onclick="showSection('orders')">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7"/>
+        <rect x="14" y="3" width="7" height="7"/>
+        <rect x="14" y="14" width="7" height="7"/>
+        <rect x="3" y="14" width="7" height="7"/>
+      </svg>
+      <span>Orders</span>
     </button>
     <button class="nav-item" onclick="showSection('account')">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -755,7 +863,16 @@
         <p>Your trusted Filipino marketplace</p>
       </div>
       
-      <div class="category-chips" id="categoryChips"></div>
+      <div class="category-filter">
+        <button class="chip active" onclick="filterByCategory('')">All</button>
+        <button class="chip" onclick="filterByCategory('Electronics')">Electronics</button>
+        <button class="chip" onclick="filterByCategory('Fashion')">Fashion</button>
+        <button class="chip" onclick="filterByCategory('Home & Living')">Home & Living</button>
+        <button class="chip" onclick="filterByCategory('Food & Beverage')">Food & Beverage</button>
+        <button class="chip" onclick="filterByCategory('Health & Beauty')">Health & Beauty</button>
+        <button class="chip" onclick="filterByCategory('Sports')">Sports</button>
+        <button class="chip" onclick="filterByCategory('Others')">Others</button>
+      </div>
       
       <div class="product-grid" id="productGrid"></div>
     </div>
@@ -908,7 +1025,88 @@
     <div class="container">
       <div class="card">
         <div class="card-header">Settings</div>
-        <div id="settingsContent"></div>
+        <div id="settingsContent">
+          <div style="display:grid;gap:1.5rem">
+            <!-- Profile Picture -->
+            <div style="text-align:center">
+              <div id="profilePicContainer"></div>
+              <input type="file" id="profilePicUpload" accept="image/*" style="display:none" onchange="handleProfilePicUpload()">
+            </div>
+
+            <!-- Username -->
+            <div>
+              <h4 style="margin-bottom:1rem">Change Username</h4>
+              <div class="input-group">
+                <label>New Username</label>
+                <input type="text" id="newUsername" placeholder="New username">
+              </div>
+              <button class="btn btn-primary" onclick="updateUsername()">Update Username</button>
+            </div>
+
+            <!-- Password -->
+            <div style="border-top:1px solid var(--border);padding-top:1rem">
+              <h4 style="margin-bottom:1rem">Change Password</h4>
+              <div class="input-group">
+                <label>Current Password</label>
+                <input type="password" id="currentPassword" placeholder="Current password">
+              </div>
+              <div class="input-group">
+                <label>New Password</label>
+                <input type="password" id="newPassword" placeholder="New password">
+              </div>
+              <div class="input-group">
+                <label>Confirm New Password</label>
+                <input type="password" id="confirmPassword" placeholder="Confirm password">
+              </div>
+              <button class="btn btn-primary" onclick="updatePasswordUser()">Update Password</button>
+            </div>
+
+            <!-- Theme -->
+            <div style="border-top:1px solid var(--border);padding-top:1rem">
+              <h4 style="margin-bottom:1rem">Interface Theme</h4>
+              <div style="display:flex;gap:1rem">
+                <button class="btn btn-outline" onclick="setTheme('light')" id="lightThemeBtn">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"/>
+                    <line x1="12" y1="1" x2="12" y2="3"/>
+                    <line x1="12" y1="21" x2="12" y2="23"/>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                    <line x1="1" y1="12" x2="3" y2="12"/>
+                    <line x1="21" y1="12" x2="23" y2="12"/>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                  </svg>
+                  Light Mode
+                </button>
+                <button class="btn btn-outline" onclick="setTheme('dark')" id="darkThemeBtn">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                  </svg>
+                  Dark Mode
+                </button>
+              </div>
+            </div>
+
+            <!-- Billing Address -->
+            <div style="border-top:1px solid var(--border);padding-top:1rem">
+              <h4 style="margin-bottom:1rem">Billing Address</h4>
+              <div class="input-group">
+                <label>Full Name</label>
+                <input type="text" id="settingsBillingName" placeholder="Juan Dela Cruz">
+              </div>
+              <div class="input-group">
+                <label>Address</label>
+                <textarea id="settingsBillingAddress" placeholder="Complete address"></textarea>
+              </div>
+              <div class="input-group">
+                <label>Phone</label>
+                <input type="tel" id="settingsBillingPhone" placeholder="+63 912 345 6789">
+              </div>
+              <button class="btn btn-primary" onclick="updateBillingInfo()">Update Billing Info</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -918,7 +1116,88 @@
     <div class="container">
       <div class="card">
         <div class="card-header">Admin Panel</div>
+        <div style="display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap">
+          <button class="btn btn-outline" onclick="showAdminTab('sellers')">Pending Sellers</button>
+          <button class="btn btn-outline" onclick="showAdminTab('users')">All Users</button>
+          <button class="btn btn-outline" onclick="showAdminTab('vouchers')">Vouchers</button>
+        </div>
         <div id="adminContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cancel Order Modal -->
+  <div id="cancelOrderModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Cancel Order</h3>
+        <button class="modal-close" onclick="closeModal('cancelOrderModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="cancelOrderId">
+        <div class="input-group">
+          <label>Reason for Cancellation</label>
+          <select id="cancelReason">
+            <option value="">Select a reason</option>
+            <option value="Changed my mind">Changed my mind</option>
+            <option value="Found a better price">Found a better price</option>
+            <option value="Ordered by mistake">Ordered by mistake</option>
+            <option value="Delivery takes too long">Delivery takes too long</option>
+            <option value="Payment issues">Payment issues</option>
+            <option value="Product no longer needed">Product no longer needed</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="input-group" id="otherReasonGroup" style="display:none">
+          <label>Please specify</label>
+          <textarea id="otherReason" placeholder="Enter your reason..."></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="confirmCancelOrder()">Confirm Cancellation</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Voucher Modal -->
+  <div id="createVoucherModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Create Voucher</h3>
+        <button class="modal-close" onclick="closeModal('createVoucherModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="input-group">
+          <label>Voucher Code</label>
+          <input type="text" id="voucherCode" placeholder="SAVE10" style="text-transform:uppercase">
+        </div>
+        <div class="input-group">
+          <label>Type</label>
+          <select id="voucherType">
+            <option value="percentage">Percentage</option>
+            <option value="fixed">Fixed Amount</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Amount</label>
+          <input type="number" id="voucherAmount" placeholder="10" step="0.01">
+          <small style="color:var(--text-gray)">For percentage: enter 10 for 10%, for fixed: enter amount in PHP</small>
+        </div>
+        <div class="input-group">
+          <label>Minimum Spend (₱)</label>
+          <input type="number" id="voucherMinSpend" placeholder="0" step="0.01">
+        </div>
+        <div class="input-group">
+          <label>Usage Limit (0 = unlimited)</label>
+          <input type="number" id="voucherUsageLimit" placeholder="0">
+        </div>
+        <div class="input-group">
+          <label>Per User Limit (0 = unlimited)</label>
+          <input type="number" id="voucherPerUserLimit" placeholder="1">
+        </div>
+        <div class="input-group">
+          <label>Expires At</label>
+          <input type="datetime-local" id="voucherExpiry">
+        </div>
+        <button class="btn btn-primary" onclick="createVoucher()">Create Voucher</button>
       </div>
     </div>
   </div>
@@ -962,6 +1241,19 @@
         <div class="input-group">
           <label>Variants (comma-separated, optional)</label>
           <input type="text" id="productVariants" placeholder="Small, Medium, Large">
+        </div>
+        <div class="input-group">
+          <label>Category</label>
+          <select id="productCategory">
+            <option value="">Select category</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Fashion">Fashion</option>
+            <option value="Home & Living">Home & Living</option>
+            <option value="Food & Beverage">Food & Beverage</option>
+            <option value="Health & Beauty">Health & Beauty</option>
+            <option value="Sports">Sports</option>
+            <option value="Others">Others</option>
+          </select>
         </div>
         <div class="input-group">
           <label>Images (up to 3)</label>
@@ -1032,6 +1324,9 @@
     let currentCart = [];
     let productImages = ['', '', ''];
     let currentRating = 0;
+    let currentCategory = '';
+    let searchQuery = '';
+    let currentAdminTab = 'sellers';
 
     // Show Toast
     window.showToast = (message, type = 'info') => {
@@ -1040,6 +1335,26 @@
       toast.className = `toast ${type} show`;
       setTimeout(() => toast.classList.remove('show'), 3000);
     };
+
+    // Toggle User Menu
+    window.toggleUserMenu = () => {
+      if (!currentUser) {
+        showSection('auth');
+        return;
+      }
+      
+      const dropdown = document.getElementById('userMenuDropdown');
+      dropdown.classList.toggle('show');
+    };
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      const userMenu = document.querySelector('.user-menu');
+      const dropdown = document.getElementById('userMenuDropdown');
+      if (!userMenu?.contains(e.target)) {
+        dropdown?.classList.remove('show');
+      }
+    });
 
     // Show Section
     window.showSection = (sectionId) => {
@@ -1051,6 +1366,7 @@
       if (sectionId === 'cart') loadCart();
       if (sectionId === 'account') loadAccount();
       if (sectionId === 'orders') loadOrders();
+      if (sectionId === 'settings') loadSettings();
       if (sectionId === 'sellerDashboard') loadSellerProducts();
       if (sectionId === 'adminPanel') loadAdminPanel();
     };
@@ -1165,22 +1481,40 @@
     };
 
     // Load Products
-    window.loadProducts = async () => {
+    window.loadProducts = async (category = '', search = '') => {
       const grid = document.getElementById('productGrid');
       grid.innerHTML = '<div class="skeleton" style="height:300px"></div>'.repeat(6);
 
       try {
-        const q = query(collection(db, 'products'), where('active', '==', true));
+        let q = query(collection(db, 'products'), where('active', '==', true));
+        
+        if (category) {
+          q = query(collection(db, 'products'), where('active', '==', true), where('category', '==', category));
+        }
+        
         const snapshot = await getDocs(q);
         
-        if (snapshot.empty) {
+        let products = [];
+        snapshot.forEach(doc => {
+          products.push({ id: doc.id, ...doc.data() });
+        });
+
+        // Filter by search query
+        if (search) {
+          const searchLower = search.toLowerCase();
+          products = products.filter(p => 
+            p.name.toLowerCase().includes(searchLower) || 
+            p.description?.toLowerCase().includes(searchLower)
+          );
+        }
+        
+        if (products.length === 0) {
           grid.innerHTML = '<div class="empty-state"><p>No products available</p></div>';
           return;
         }
 
         grid.innerHTML = '';
-        snapshot.forEach(doc => {
-          const product = { id: doc.id, ...doc.data() };
+        products.forEach(product => {
           const card = createProductCard(product);
           grid.appendChild(card);
         });
@@ -1189,6 +1523,32 @@
         grid.innerHTML = '<div class="empty-state"><p>Error loading products</p></div>';
       }
     };
+
+    window.filterByCategory = (category) => {
+      currentCategory = category;
+      document.querySelectorAll('.category-filter .chip').forEach(chip => {
+        chip.classList.remove('active');
+      });
+      event.target.classList.add('active');
+      loadProducts(category, searchQuery);
+    };
+
+    window.searchProducts = () => {
+      searchQuery = document.getElementById('searchInput').value;
+      loadProducts(currentCategory, searchQuery);
+    };
+
+    // Add enter key support for search
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput) {
+        searchInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            searchProducts();
+          }
+        });
+      }
+    });
 
     function createProductCard(product) {
       const card = document.createElement('div');
@@ -1738,20 +2098,90 @@
                 ${item.name} ${item.variant ? `(${item.variant})` : ''} x${item.qty} - ₱${(item.price * item.qty).toFixed(2)}
               </div>
             `).join('')}
-            <div style="border-top:1px solid var(--border);margin-top:0.5rem;padding-top:0.5rem;display:flex;justify-content:space-between;align-items:center">
+            <div style="border-top:1px solid var(--border);margin-top:0.5rem;padding-top:0.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem">
               <span style="font-weight:600">Total: ₱${order.total.toFixed(2)}</span>
               <span style="font-size:0.85rem;color:var(--text-gray)">Payment: ${order.paymentMethod.toUpperCase()}</span>
             </div>
-            ${order.items.some(item => !item.rated) ? `
-              <button class="btn btn-outline" style="width:100%;margin-top:0.5rem" onclick="showRatingModal('${order.items[0].productId}')">
-                Rate Product
-              </button>
+            ${order.cancelReason ? `
+              <div style="background:var(--bg-light);padding:0.75rem;border-radius:6px;margin-top:0.5rem">
+                <div style="font-weight:600;font-size:0.9rem;margin-bottom:0.25rem;color:var(--red)">Cancelled</div>
+                <div style="font-size:0.85rem;color:var(--text-gray)">Reason: ${order.cancelReason}</div>
+              </div>
             ` : ''}
+            <div style="display:flex;gap:0.5rem;margin-top:0.5rem;flex-wrap:wrap">
+              ${order.status === 'pending' && !order.cancelReason ? `
+                <button class="btn btn-outline" style="flex:1" onclick="showCancelOrderModal('${order.id}')">
+                  Cancel Order
+                </button>
+              ` : ''}
+              ${order.items.some(item => !item.rated) && order.status === 'completed' ? `
+                <button class="btn btn-outline" style="flex:1" onclick="showRatingModal('${order.items[0].productId}')">
+                  Rate Product
+                </button>
+              ` : ''}
+            </div>
           `;
           container.appendChild(orderEl);
         });
       } catch (error) {
         showToast('Error loading orders', 'error');
+      }
+    };
+
+    window.showCancelOrderModal = (orderId) => {
+      document.getElementById('cancelOrderId').value = orderId;
+      document.getElementById('cancelReason').value = '';
+      document.getElementById('otherReason').value = '';
+      document.getElementById('otherReasonGroup').style.display = 'none';
+      document.getElementById('cancelOrderModal').classList.add('active');
+    };
+
+    // Show/hide other reason textarea
+    document.addEventListener('DOMContentLoaded', () => {
+      const cancelReasonSelect = document.getElementById('cancelReason');
+      if (cancelReasonSelect) {
+        cancelReasonSelect.addEventListener('change', (e) => {
+          const otherGroup = document.getElementById('otherReasonGroup');
+          if (e.target.value === 'Other') {
+            otherGroup.style.display = 'block';
+          } else {
+            otherGroup.style.display = 'none';
+          }
+        });
+      }
+    });
+
+    window.confirmCancelOrder = async () => {
+      const orderId = document.getElementById('cancelOrderId').value;
+      let reason = document.getElementById('cancelReason').value;
+
+      if (!reason) {
+        showToast('Please select a reason', 'error');
+        return;
+      }
+
+      if (reason === 'Other') {
+        const otherReason = document.getElementById('otherReason').value;
+        if (!otherReason) {
+          showToast('Please specify the reason', 'error');
+          return;
+        }
+        reason = otherReason;
+      }
+
+      try {
+        // Update order status and add cancel reason
+        await updateDoc(doc(db, 'orders', orderId), {
+          status: 'cancelled',
+          cancelReason: reason,
+          cancelledAt: serverTimestamp()
+        });
+
+        showToast('Order cancelled successfully', 'success');
+        closeModal('cancelOrderModal');
+        loadOrders();
+      } catch (error) {
+        showToast('Error cancelling order', 'error');
       }
     };
 
@@ -1796,6 +2226,7 @@
       document.getElementById('productStock').value = '';
       document.getElementById('productDescription').value = '';
       document.getElementById('productVariants').value = '';
+      document.getElementById('productCategory').value = '';
       productImages = ['', '', ''];
       updateImagePreviews();
       document.getElementById('addProductModal').classList.add('active');
@@ -1847,9 +2278,10 @@
       const stock = parseInt(document.getElementById('productStock').value);
       const description = document.getElementById('productDescription').value;
       const variantsStr = document.getElementById('productVariants').value;
+      const category = document.getElementById('productCategory').value;
       const variants = variantsStr ? variantsStr.split(',').map(v => v.trim()) : [];
 
-      if (!name || !price || !stock || !description) {
+      if (!name || !price || !stock || !description || !category) {
         showToast('Please fill all required fields', 'error');
         return;
       }
@@ -1859,6 +2291,7 @@
         price,
         stock,
         description,
+        category,
         variants,
         images: productImages.filter(img => img),
         sellerId: currentUser.uid,
@@ -1961,6 +2394,7 @@
         document.getElementById('productStock').value = product.stock;
         document.getElementById('productDescription').value = product.description;
         document.getElementById('productVariants').value = product.variants?.join(', ') || '';
+        document.getElementById('productCategory').value = product.category || '';
         
         productImages = [...(product.images || []), '', '', ''].slice(0, 3);
         updateImagePreviews();
@@ -2014,6 +2448,11 @@
 
         container.innerHTML = `
           <div style="display:grid;gap:1rem">
+            ${userData.profilePicture ? `
+              <div style="text-align:center">
+                <img src="${userData.profilePicture}" alt="Profile" style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid var(--border)">
+              </div>
+            ` : ''}
             <div>
               <div style="font-weight:600;margin-bottom:0.5rem">Email</div>
               <div>${userData.email}</div>
@@ -2061,6 +2500,186 @@
         `;
       } catch (error) {
         showToast('Error loading account', 'error');
+      }
+    };
+
+    // Settings Functions
+    window.loadSettings = async () => {
+      if (!currentUser) {
+        showToast('Please login first', 'error');
+        showSection('auth');
+        return;
+      }
+
+      try {
+        const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+        const userData = userDoc.data();
+
+        // Load profile picture
+        const profilePicContainer = document.getElementById('profilePicContainer');
+        if (userData.profilePicture) {
+          profilePicContainer.innerHTML = `
+            <img src="${userData.profilePicture}" class="profile-pic-preview" onclick="document.getElementById('profilePicUpload').click()">
+            <div><button class="btn btn-outline" onclick="removeProfilePic()">Remove Picture</button></div>
+          `;
+        } else {
+          profilePicContainer.innerHTML = `
+            <div class="profile-pic-placeholder" onclick="document.getElementById('profilePicUpload').click()">+</div>
+            <div style="color:var(--text-gray);font-size:0.9rem">Click to upload profile picture</div>
+          `;
+        }
+
+        // Load billing info
+        if (userData.billing) {
+          document.getElementById('settingsBillingName').value = userData.billing.name || '';
+          document.getElementById('settingsBillingAddress').value = userData.billing.address || '';
+          document.getElementById('settingsBillingPhone').value = userData.billing.phone || '';
+        }
+
+        // Highlight current theme
+        const theme = localStorage.getItem('theme') || 'light';
+        updateThemeButtons(theme);
+      } catch (error) {
+        showToast('Error loading settings', 'error');
+      }
+    };
+
+    window.handleProfilePicUpload = () => {
+      const file = document.getElementById('profilePicUpload').files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          await updateDoc(doc(db, 'users', currentUser.uid), {
+            profilePicture: e.target.result
+          });
+          showToast('Profile picture updated!', 'success');
+          loadSettings();
+          loadAccount();
+        } catch (error) {
+          showToast('Error updating profile picture', 'error');
+        }
+      };
+      reader.readAsDataURL(file);
+    };
+
+    window.removeProfilePic = async () => {
+      try {
+        await updateDoc(doc(db, 'users', currentUser.uid), {
+          profilePicture: ''
+        });
+        showToast('Profile picture removed', 'success');
+        loadSettings();
+        loadAccount();
+      } catch (error) {
+        showToast('Error removing profile picture', 'error');
+      }
+    };
+
+    window.updateUsername = async () => {
+      const newUsername = document.getElementById('newUsername').value;
+      
+      if (!newUsername) {
+        showToast('Please enter a username', 'error');
+        return;
+      }
+
+      try {
+        await updateProfile(currentUser, { displayName: newUsername });
+        await updateDoc(doc(db, 'users', currentUser.uid), {
+          username: newUsername
+        });
+        showToast('Username updated!', 'success');
+        document.getElementById('newUsername').value = '';
+        loadAccount();
+      } catch (error) {
+        showToast('Error updating username', 'error');
+      }
+    };
+
+    window.updatePasswordUser = async () => {
+      const currentPass = document.getElementById('currentPassword').value;
+      const newPass = document.getElementById('newPassword').value;
+      const confirmPass = document.getElementById('confirmPassword').value;
+
+      if (!currentPass || !newPass || !confirmPass) {
+        showToast('Please fill all password fields', 'error');
+        return;
+      }
+
+      if (newPass !== confirmPass) {
+        showToast('Passwords do not match', 'error');
+        return;
+      }
+
+      if (newPass.length < 6) {
+        showToast('Password must be at least 6 characters', 'error');
+        return;
+      }
+
+      try {
+        // Reauthenticate user
+        const credential = EmailAuthProvider.credential(currentUser.email, currentPass);
+        await reauthenticateWithCredential(currentUser, credential);
+        
+        // Update password
+        await updatePassword(currentUser, newPass);
+        
+        showToast('Password updated successfully!', 'success');
+        document.getElementById('currentPassword').value = '';
+        document.getElementById('newPassword').value = '';
+        document.getElementById('confirmPassword').value = '';
+      } catch (error) {
+        if (error.code === 'auth/wrong-password') {
+          showToast('Current password is incorrect', 'error');
+        } else {
+          showToast('Error updating password', 'error');
+        }
+      }
+    };
+
+    window.setTheme = (theme) => {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+      updateThemeButtons(theme);
+      showToast(`${theme === 'dark' ? 'Dark' : 'Light'} mode activated`, 'success');
+    };
+
+    function updateThemeButtons(theme) {
+      const lightBtn = document.getElementById('lightThemeBtn');
+      const darkBtn = document.getElementById('darkThemeBtn');
+      
+      if (theme === 'dark') {
+        darkBtn?.classList.add('btn-primary');
+        darkBtn?.classList.remove('btn-outline');
+        lightBtn?.classList.add('btn-outline');
+        lightBtn?.classList.remove('btn-primary');
+      } else {
+        lightBtn?.classList.add('btn-primary');
+        lightBtn?.classList.remove('btn-outline');
+        darkBtn?.classList.add('btn-outline');
+        darkBtn?.classList.remove('btn-primary');
+      }
+    }
+
+    window.updateBillingInfo = async () => {
+      const name = document.getElementById('settingsBillingName').value;
+      const address = document.getElementById('settingsBillingAddress').value;
+      const phone = document.getElementById('settingsBillingPhone').value;
+
+      if (!name || !address || !phone) {
+        showToast('Please fill all billing fields', 'error');
+        return;
+      }
+
+      try {
+        await updateDoc(doc(db, 'users', currentUser.uid), {
+          billing: { name, address, phone }
+        });
+        showToast('Billing info updated!', 'success');
+      } catch (error) {
+        showToast('Error updating billing info', 'error');
       }
     };
 
@@ -2224,6 +2843,10 @@
         userProfile = null;
       }
     });
+
+    // Initialize theme
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
 
     // Initialize
     loadProducts();
