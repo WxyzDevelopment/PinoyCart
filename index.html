@@ -593,6 +593,11 @@
       color: #065F46;
     }
 
+    .order-status.cancelled {
+      background: #FEE2E2;
+      color: #991B1B;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
       .search-bar {
@@ -807,6 +812,14 @@
               </svg>
               Settings
             </div>
+            <div class="user-menu-item" onclick="showSection('about'); toggleUserMenu()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="16" x2="12" y2="12"/>
+                <line x1="12" y1="8" x2="12.01" y2="8"/>
+              </svg>
+              About
+            </div>
             <div class="user-menu-item" onclick="logout(); toggleUserMenu()">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -829,6 +842,7 @@
       </svg>
       <span>Home</span>
     </button>
+
     <button class="nav-item" onclick="showSection('cart')">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="9" cy="21" r="1"/>
@@ -1198,6 +1212,99 @@
           <input type="datetime-local" id="voucherExpiry">
         </div>
         <button class="btn btn-primary" onclick="createVoucher()">Create Voucher</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- About Section -->
+  <div id="about" class="section">
+    <div class="container">
+      <div class="card">
+        <div class="card-header">About PinoyCart</div>
+        <div style="line-height:1.8;color:var(--text-dark)">
+          <p style="margin-bottom:1.5rem">
+            <strong>PinoyCart</strong> is a comprehensive e-commerce platform designed specifically for Filipino businesses and consumers. Our mission is to provide a seamless online marketplace that connects local sellers with customers across the Philippines, making it easier than ever to buy and sell products online. With features like secure payment processing, real-time inventory management, and an intuitive user interface, PinoyCart empowers entrepreneurs to grow their businesses while providing shoppers with a convenient and trustworthy platform for their purchases.
+          </p>
+          
+          <p style="margin-bottom:1.5rem">
+            Built with modern web technologies and Firebase integration, PinoyCart offers a robust and scalable solution for online retail. The platform includes advanced features such as seller account management, product categorization, shopping cart functionality, order tracking, voucher systems, and user ratings. Whether you're a small business owner looking to expand your reach or a customer searching for quality products, PinoyCart provides the tools and features you need for a successful e-commerce experience.
+          </p>
+
+          <p style="margin-bottom:1.5rem">
+            PinoyCart is available both as a <strong>responsive web application</strong> accessible from any browser and as a <strong>mobile application</strong> for Android devices, ensuring you can shop or manage your store anytime, anywhere. Our commitment to user experience, security, and continuous improvement makes PinoyCart the ideal choice for the modern Filipino marketplace.
+          </p>
+
+          <div style="border-top:2px solid var(--border);margin:2rem 0;padding-top:2rem">
+            <h3 style="color:var(--blue);margin-bottom:1rem;font-size:1.1rem">Development Team</h3>
+            <p style="margin-bottom:1rem;font-weight:600;color:var(--text-dark)">
+              This is Designed and Developed by:
+            </p>
+            <ul style="list-style:none;padding-left:1rem;margin-bottom:2rem">
+              <li style="margin-bottom:0.5rem;display:flex;align-items:center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right:0.5rem;color:var(--red)">
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+                <strong>Steven Macapañas</strong>
+              </li>
+              <li style="margin-bottom:0.5rem;display:flex;align-items:center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right:0.5rem;color:var(--red)">
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+                <strong>Leo Grabrino</strong>
+              </li>
+              <li style="margin-bottom:0.5rem;display:flex;align-items:center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right:0.5rem;color:var(--red)">
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+                <strong>Cathylyn Abueva</strong>
+              </li>
+              <li style="margin-bottom:0.5rem;display:flex;align-items:center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right:0.5rem;color:var(--red)">
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+                <strong>Charles Glenn Avila</strong>
+              </li>
+              <li style="margin-bottom:0.5rem;display:flex;align-items:center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right:0.5rem;color:var(--red)">
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+                <strong>Charles Abaigar</strong>
+              </li>
+            </ul>
+          </div>
+
+          <div style="background:var(--bg-light);padding:1.5rem;border-radius:8px;border-left:4px solid var(--blue);margin-bottom:2rem">
+            <p style="font-weight:600;color:var(--text-dark);margin-bottom:0.5rem">
+              📚 Academic Submission
+            </p>
+            <p style="color:var(--text-gray)">
+              This project is being submitted by the developers to <strong style="color:var(--text-dark)">Mr. Felix Carlos Uy</strong>.
+            </p>
+          </div>
+
+          <div style="text-align:center;padding:2rem;background:linear-gradient(135deg, var(--red), var(--blue));border-radius:8px">
+            <h4 style="color:var(--white);margin-bottom:1rem;font-size:1.2rem">Download Mobile App</h4>
+            <p style="color:var(--white);margin-bottom:1.5rem;opacity:0.9">
+              Get the PinoyCart mobile application for Android devices
+            </p>
+            <a href="pinoycart.apk" download="pinoycart.apk" class="btn" style="background:var(--white);color:var(--red);text-decoration:none;display:inline-flex;font-weight:700">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:0.5rem">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Download APK (Android)
+            </a>
+            <p style="color:var(--white);margin-top:1rem;font-size:0.85rem;opacity:0.8">
+              Version 1.0.0 • Size: ~26.2 MB
+            </p>
+          </div>
+
+          <div style="margin-top:2rem;padding-top:2rem;border-top:1px solid var(--border);text-align:center;color:var(--text-gray);font-size:0.9rem">
+            <p>© 2025 PinoyCart. All rights reserved.</p>
+            <p style="margin-top:0.5rem">Made with ❤️ for the Filipino Community</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -2720,41 +2827,263 @@
           return;
         }
 
-        const sellersSnapshot = await getDocs(
-          query(collection(db, 'sellers'), where('status', '==', 'pending'))
-        );
-
-        container.innerHTML = `
-          <div>
-            <h4 style="margin-bottom:1rem">Pending Seller Applications</h4>
-            ${sellersSnapshot.empty ? '<p>No pending applications</p>' : ''}
-            <div style="display:grid;gap:1rem">
-              ${sellersSnapshot.docs.map(doc => {
-                const seller = { id: doc.id, ...doc.data() };
-                return `
-                  <div class="card">
-                    <div style="font-weight:600;margin-bottom:0.5rem">${seller.shopName}</div>
-                    <div style="font-size:0.9rem;color:var(--text-gray);margin-bottom:0.5rem">
-                      Seller: ${seller.sellerName}<br>
-                      Email: ${seller.email}<br>
-                      Contact: ${seller.contactNumber}
-                    </div>
-                    <div style="display:flex;gap:0.5rem">
-                      <button class="btn btn-primary" style="flex:1" onclick="approveRejectSeller('${seller.id}', 'approved')">
-                        Approve
-                      </button>
-                      <button class="btn btn-outline" style="flex:1" onclick="approveRejectSeller('${seller.id}', 'rejected')">
-                        Reject
-                      </button>
-                    </div>
-                  </div>
-                `;
-              }).join('')}
-            </div>
-          </div>
-        `;
+        showAdminTab(currentAdminTab);
       } catch (error) {
         showToast('Error loading admin panel', 'error');
+      }
+    };
+
+    window.showAdminTab = async (tab) => {
+      currentAdminTab = tab;
+      const container = document.getElementById('adminContent');
+
+      // Update button styles
+      document.querySelectorAll('#adminPanel .btn').forEach(btn => {
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-outline');
+      });
+      event?.target?.classList.remove('btn-outline');
+      event?.target?.classList.add('btn-primary');
+
+      if (tab === 'sellers') {
+        await loadPendingSellers(container);
+      } else if (tab === 'users') {
+        await loadAllUsers(container);
+      } else if (tab === 'vouchers') {
+        await loadVouchers(container);
+      }
+    };
+
+    async function loadPendingSellers(container) {
+      const sellersSnapshot = await getDocs(
+        query(collection(db, 'sellers'), where('status', '==', 'pending'))
+      );
+
+      container.innerHTML = `
+        <div>
+          <h4 style="margin-bottom:1rem">Pending Seller Applications</h4>
+          ${sellersSnapshot.empty ? '<p>No pending applications</p>' : ''}
+          <div style="display:grid;gap:1rem">
+            ${sellersSnapshot.docs.map(doc => {
+              const seller = { id: doc.id, ...doc.data() };
+              return `
+                <div class="card">
+                  <div style="font-weight:600;margin-bottom:0.5rem">${seller.shopName}</div>
+                  <div style="font-size:0.9rem;color:var(--text-gray);margin-bottom:0.5rem">
+                    Seller: ${seller.sellerName}<br>
+                    Email: ${seller.email}<br>
+                    Contact: ${seller.contactNumber}
+                  </div>
+                  <div style="display:flex;gap:0.5rem">
+                    <button class="btn btn-primary" style="flex:1" onclick="approveRejectSeller('${seller.id}', 'approved')">
+                      Approve
+                    </button>
+                    <button class="btn btn-outline" style="flex:1" onclick="approveRejectSeller('${seller.id}', 'rejected')">
+                      Reject
+                    </button>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    async function loadAllUsers(container) {
+      const usersSnapshot = await getDocs(collection(db, 'users'));
+
+      container.innerHTML = `
+        <div>
+          <h4 style="margin-bottom:1rem">All Registered Users</h4>
+          <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse">
+              <thead>
+                <tr style="border-bottom:2px solid var(--border);text-align:left">
+                  <th style="padding:0.75rem">Username</th>
+                  <th style="padding:0.75rem">Email</th>
+                  <th style="padding:0.75rem">Role</th>
+                  <th style="padding:0.75rem">Status</th>
+                  <th style="padding:0.75rem">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${usersSnapshot.docs.map(doc => {
+                  const user = { id: doc.id, ...doc.data() };
+                  return `
+                    <tr style="border-bottom:1px solid var(--border)">
+                      <td style="padding:0.75rem">${user.username || 'N/A'}</td>
+                      <td style="padding:0.75rem">${user.email}</td>
+                      <td style="padding:0.75rem">
+                        <span style="text-transform:capitalize;color:${user.role === 'admin' ? 'var(--red)' : user.role === 'seller' ? 'var(--blue)' : 'var(--text-gray)'}">${user.role}</span>
+                      </td>
+                      <td style="padding:0.75rem">
+                        <span style="color:${user.suspended ? 'var(--red)' : 'green'}">${user.suspended ? 'Suspended' : 'Active'}</span>
+                      </td>
+                      <td style="padding:0.75rem">
+                        ${user.role !== 'admin' ? `
+                          <button class="btn btn-outline" style="padding:0.5rem 1rem;font-size:0.85rem" 
+                            onclick="toggleUserSuspension('${user.id}', ${!user.suspended})">
+                            ${user.suspended ? 'Unsuspend' : 'Suspend'}
+                          </button>
+                        ` : '<span style="color:var(--text-gray)">-</span>'}
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    async function loadVouchers(container) {
+      const vouchersSnapshot = await getDocs(collection(db, 'vouchers'));
+
+      container.innerHTML = `
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+            <h4>Vouchers</h4>
+            <button class="btn btn-primary" onclick="showCreateVoucherModal()">Create Voucher</button>
+          </div>
+          ${vouchersSnapshot.empty ? '<p>No vouchers created yet</p>' : ''}
+          <div style="display:grid;gap:1rem">
+            ${vouchersSnapshot.docs.map(doc => {
+              const voucher = { id: doc.id, ...doc.data() };
+              const isExpired = voucher.expiresAt && new Date(voucher.expiresAt) < new Date();
+              return `
+                <div class="card">
+                  <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:0.5rem">
+                    <div>
+                      <div style="font-weight:700;font-size:1.25rem;color:var(--red)">${voucher.code}</div>
+                      <div style="font-size:0.9rem;color:var(--text-gray)">
+                        ${voucher.type === 'percentage' ? `${voucher.amount}% OFF` : `₱${voucher.amount} OFF`}
+                      </div>
+                    </div>
+                    <span style="padding:0.25rem 0.75rem;border-radius:12px;font-size:0.85rem;background:${voucher.active && !isExpired ? '#D1FAE5' : '#FEE2E2'};color:${voucher.active && !isExpired ? '#065F46' : '#991B1B'}">
+                      ${isExpired ? 'Expired' : voucher.active ? 'Active' : 'Inactive'}
+                    </span>
+                  </div>
+                  <div style="font-size:0.85rem;color:var(--text-gray);margin-bottom:0.5rem">
+                    Min Spend: ₱${voucher.minSpend || 0}<br>
+                    Used: ${voucher.usedCount || 0}${voucher.usageLimit ? ` / ${voucher.usageLimit}` : ''}<br>
+                    Per User: ${voucher.perUserLimit || 'Unlimited'}<br>
+                    Expires: ${voucher.expiresAt ? new Date(voucher.expiresAt).toLocaleDateString() : 'No expiry'}
+                  </div>
+                  <div style="display:flex;gap:0.5rem">
+                    <button class="btn btn-outline" style="flex:1" onclick="toggleVoucherStatus('${voucher.id}', ${!voucher.active})">
+                      ${voucher.active ? 'Deactivate' : 'Activate'}
+                    </button>
+                    <button class="btn btn-outline" onclick="deleteVoucher('${voucher.id}')">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    window.toggleUserSuspension = async (userId, suspend) => {
+      if (!confirm(`Are you sure you want to ${suspend ? 'suspend' : 'unsuspend'} this user?`)) return;
+
+      try {
+        await updateDoc(doc(db, 'users', userId), {
+          suspended: suspend,
+          suspendedAt: suspend ? serverTimestamp() : null
+        });
+
+        showToast(`User ${suspend ? 'suspended' : 'unsuspended'} successfully`, 'success');
+        loadAdminPanel();
+      } catch (error) {
+        showToast('Error updating user status', 'error');
+      }
+    };
+
+    window.showCreateVoucherModal = () => {
+      document.getElementById('voucherCode').value = '';
+      document.getElementById('voucherType').value = 'percentage';
+      document.getElementById('voucherAmount').value = '';
+      document.getElementById('voucherMinSpend').value = '0';
+      document.getElementById('voucherUsageLimit').value = '0';
+      document.getElementById('voucherPerUserLimit').value = '1';
+      document.getElementById('voucherExpiry').value = '';
+      document.getElementById('createVoucherModal').classList.add('active');
+    };
+
+    window.createVoucher = async () => {
+      const code = document.getElementById('voucherCode').value.toUpperCase();
+      const type = document.getElementById('voucherType').value;
+      const amount = parseFloat(document.getElementById('voucherAmount').value);
+      const minSpend = parseFloat(document.getElementById('voucherMinSpend').value) || 0;
+      const usageLimit = parseInt(document.getElementById('voucherUsageLimit').value) || 0;
+      const perUserLimit = parseInt(document.getElementById('voucherPerUserLimit').value) || 0;
+      const expiry = document.getElementById('voucherExpiry').value;
+
+      if (!code || !amount) {
+        showToast('Please fill required fields', 'error');
+        return;
+      }
+
+      if (type === 'percentage' && (amount <= 0 || amount > 100)) {
+        showToast('Percentage must be between 1 and 100', 'error');
+        return;
+      }
+
+      try {
+        // Check if code already exists
+        const existingVoucher = await getDoc(doc(db, 'vouchers', code));
+        if (existingVoucher.exists()) {
+          showToast('Voucher code already exists', 'error');
+          return;
+        }
+
+        await setDoc(doc(db, 'vouchers', code), {
+          code,
+          type,
+          amount,
+          minSpend,
+          usageLimit,
+          perUserLimit,
+          expiresAt: expiry || null,
+          active: true,
+          usedCount: 0,
+          createdAt: serverTimestamp()
+        });
+
+        showToast('Voucher created successfully!', 'success');
+        closeModal('createVoucherModal');
+        loadAdminPanel();
+      } catch (error) {
+        showToast('Error creating voucher', 'error');
+      }
+    };
+
+    window.toggleVoucherStatus = async (voucherId, active) => {
+      try {
+        await updateDoc(doc(db, 'vouchers', voucherId), { active });
+        showToast(`Voucher ${active ? 'activated' : 'deactivated'}`, 'success');
+        loadAdminPanel();
+      } catch (error) {
+        showToast('Error updating voucher', 'error');
+      }
+    };
+
+    window.deleteVoucher = async (voucherId) => {
+      if (!confirm('Are you sure you want to delete this voucher?')) return;
+
+      try {
+        await deleteDoc(doc(db, 'vouchers', voucherId));
+        showToast('Voucher deleted', 'success');
+        loadAdminPanel();
+      } catch (error) {
+        showToast('Error deleting voucher', 'error');
       }
     };
 
@@ -2861,6 +3190,8 @@
       match /users/{userId} {
         allow read: if request.auth != null;
         allow write: if request.auth.uid == userId;
+        allow update: if request.auth != null && 
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
       }
       
       match /sellers/{sellerId} {
@@ -2886,6 +3217,9 @@
           (resource.data.uid == request.auth.uid || 
            get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
         allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+        allow update: if request.auth != null && 
+          (resource.data.uid == request.auth.uid || 
+           get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
       }
       
       match /vouchers/{voucherId} {
@@ -2895,6 +3229,37 @@
       }
     }
   }
+  
+  Firestore Data Model:
+  
+  users/{uid}:
+    - email, username, role (user|seller|admin)
+    - profilePicture (base64)
+    - coins, lastDailyClaim
+    - billing: {name, address, phone}
+    - suspended: boolean
+    - vouchersUsed: array
+  
+  sellers/{uid}:
+    - sellerName, shopName, contactNumber, email
+    - status: pending|approved|rejected
+  
+  products/{productId}:
+    - sellerId, name, description, price, stock
+    - category, variants, images (base64 array)
+    - active, ratings: [{uid, username, rating, comment, createdAt}]
+  
+  orders/{orderId}:
+    - uid, items, subtotal, discount, voucherCode, total
+    - billingSnapshot, paymentMethod, paymentInfo
+    - status: pending|completed|cancelled
+    - cancelReason, cancelledAt
+  
+  vouchers/{code}:
+    - type: percentage|fixed
+    - amount, minSpend
+    - active, expiresAt
+    - usageLimit, perUserLimit, usedCount
   
   -->
 </body>
