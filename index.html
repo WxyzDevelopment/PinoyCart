@@ -1,0 +1,2278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PinoyCart - Your Filipino Marketplace</title>
+  <style>
+    /* CSS Variables */
+    :root {
+      --red: #E63946;
+      --blue: #1D4ED8;
+      --gold: #C8A951;
+      --white: #FFFFFF;
+      --bg-light: #F9FAFB;
+      --text-dark: #1F2937;
+      --text-gray: #6B7280;
+      --border: #E5E7EB;
+      --shadow: 0 1px 3px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg-light);
+      color: var(--text-dark);
+      line-height: 1.6;
+      padding-bottom: 70px;
+    }
+
+    /* Header */
+    header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow);
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--red);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+
+    .search-bar {
+      flex: 1;
+      max-width: 500px;
+      position: relative;
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 0.5rem 2.5rem 0.5rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      font-size: 0.9rem;
+    }
+
+    .search-bar button {
+      position: absolute;
+      right: 0.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-gray);
+      cursor: pointer;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      color: var(--text-dark);
+      cursor: pointer;
+      position: relative;
+      padding: 0.5rem;
+      transition: color 0.2s;
+    }
+
+    .icon-btn:hover {
+      color: var(--red);
+    }
+
+    .badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: var(--red);
+      color: var(--white);
+      border-radius: 12px;
+      padding: 0.1rem 0.4rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      padding: 0.5rem 0;
+      z-index: 100;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+      color: var(--text-gray);
+      font-size: 0.75rem;
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      transition: color 0.2s;
+      background: none;
+      border: none;
+    }
+
+    .nav-item.active, .nav-item:hover {
+      color: var(--red);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
+    /* Section */
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    /* Button Styles */
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: var(--red);
+      color: var(--white);
+    }
+
+    .btn-primary:hover {
+      background: #c32f3b;
+    }
+
+    .btn-secondary {
+      background: var(--blue);
+      color: var(--white);
+    }
+
+    .btn-secondary:hover {
+      background: #1e40af;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dark);
+    }
+
+    .btn-outline:hover {
+      background: var(--bg-light);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Input Styles */
+    .input-group {
+      margin-bottom: 1rem;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .input-group input,
+    .input-group textarea,
+    .input-group select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
+
+    .input-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    /* Card Styles */
+    .card {
+      background: var(--white);
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 1rem;
+    }
+
+    .card-header {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Product Grid */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .product-card {
+      background: var(--white);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .product-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      background: var(--bg-light);
+    }
+
+    .product-info {
+      padding: 1rem;
+    }
+
+    .product-name {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .product-price {
+      font-size: 1.25rem;
+      color: var(--red);
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .product-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--text-dark);
+      color: var(--white);
+      padding: 1rem 1.5rem;
+      border-radius: 6px;
+      box-shadow: var(--shadow-lg);
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s;
+      max-width: 90%;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    .toast.error {
+      background: var(--red);
+    }
+
+    .toast.success {
+      background: #10B981;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--white);
+      border-radius: 8px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-gray);
+    }
+
+    /* Cart Item */
+    .cart-item {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .cart-item-image {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 6px;
+      background: var(--bg-light);
+    }
+
+    .cart-item-info {
+      flex: 1;
+    }
+
+    .cart-item-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .qty-control {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.25rem;
+    }
+
+    .qty-control button {
+      background: none;
+      border: none;
+      padding: 0.25rem 0.5rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    /* Loading Skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg-light) 25%, #e0e0e0 50%, var(--bg-light) 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+      border-radius: 4px;
+    }
+
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .skeleton-text {
+      height: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-gray);
+    }
+
+    .empty-state svg {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    /* Auth Form */
+    .auth-container {
+      max-width: 400px;
+      margin: 2rem auto;
+    }
+
+    .auth-tabs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .auth-tab {
+      padding: 0.75rem 1.5rem;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text-gray);
+      transition: all 0.2s;
+    }
+
+    .auth-tab.active {
+      color: var(--red);
+      border-bottom-color: var(--red);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 1.5rem 0;
+      color: var(--text-gray);
+      font-size: 0.9rem;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .divider span {
+      padding: 0 1rem;
+    }
+
+    /* Category Chips */
+    .category-chips {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding: 1rem 0;
+      scrollbar-width: none;
+    }
+
+    .category-chips::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      padding: 0.5rem 1rem;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chip.active,
+    .chip:hover {
+      background: var(--red);
+      color: var(--white);
+      border-color: var(--red);
+    }
+
+    /* Order Item */
+    .order-item {
+      background: var(--white);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow);
+    }
+
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .order-status {
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .order-status.pending {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+
+    .order-status.completed {
+      background: #D1FAE5;
+      color: #065F46;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .search-bar {
+        display: none;
+      }
+
+      .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+
+      .header-actions {
+        gap: 0.5rem;
+      }
+    }
+
+    @media (min-width: 769px) {
+      .bottom-nav {
+        display: none;
+      }
+
+      body {
+        padding-bottom: 0;
+      }
+    }
+
+    /* Image Upload Preview */
+    .image-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .image-preview {
+      position: relative;
+      aspect-ratio: 1;
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--bg-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .image-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .image-preview-remove {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: var(--red);
+      color: var(--white);
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    /* Rating Stars */
+    .rating-stars {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .star {
+      cursor: pointer;
+      color: var(--text-gray);
+      font-size: 1.5rem;
+    }
+
+    .star.filled {
+      color: var(--gold);
+    }
+  </style>
+</head>
+<body>
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="header-content">
+      <a href="#" class="logo" onclick="showSection('home')">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        PinoyCart
+      </a>
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search products...">
+        <button onclick="searchProducts()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+        </button>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" onclick="showSection('cart')" id="cartBtn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="9" cy="21" r="1"/>
+            <circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+          </svg>
+          <span class="badge" id="cartBadge">0</span>
+        </button>
+        <button class="icon-btn" onclick="toggleAuthMenu()" id="authBtn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" onclick="showSection('home')">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+      </svg>
+      <span>Home</span>
+    </button>
+    <button class="nav-item" onclick="showSection('categories')">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7"/>
+        <rect x="14" y="3" width="7" height="7"/>
+        <rect x="14" y="14" width="7" height="7"/>
+        <rect x="3" y="14" width="7" height="7"/>
+      </svg>
+      <span>Categories</span>
+    </button>
+    <button class="nav-item" onclick="showSection('cart')">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="9" cy="21" r="1"/>
+        <circle cx="20" cy="21" r="1"/>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+      </svg>
+      <span>Cart</span>
+    </button>
+    <button class="nav-item" onclick="showSection('account')">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span>Account</span>
+    </button>
+  </nav>
+
+  <!-- Home Section -->
+  <div id="home" class="section active">
+    <div class="container">
+      <div class="card">
+        <h2>Welcome to PinoyCart</h2>
+        <p>Your trusted Filipino marketplace</p>
+      </div>
+      
+      <div class="category-chips" id="categoryChips"></div>
+      
+      <div class="product-grid" id="productGrid"></div>
+    </div>
+  </div>
+
+  <!-- Auth Section -->
+  <div id="auth" class="section">
+    <div class="auth-container">
+      <div class="card">
+        <div class="auth-tabs">
+          <button class="auth-tab active" onclick="switchAuthTab('login')">Login</button>
+          <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+        </div>
+        
+        <div id="loginForm">
+          <div class="input-group">
+            <label>Email</label>
+            <input type="email" id="loginEmail" placeholder="your@email.com">
+          </div>
+          <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="loginPassword" placeholder="••••••••">
+          </div>
+          <button class="btn btn-primary" style="width:100%" onclick="login()">Login</button>
+          
+          <div class="divider"><span>OR</span></div>
+          
+          <button class="btn btn-outline" style="width:100%" onclick="googleSignIn()">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Continue with Google
+          </button>
+        </div>
+        
+        <div id="signupForm" style="display:none">
+          <div class="input-group">
+            <label>Username</label>
+            <input type="text" id="signupUsername" placeholder="johndoe">
+          </div>
+          <div class="input-group">
+            <label>Email</label>
+            <input type="email" id="signupEmail" placeholder="your@email.com">
+          </div>
+          <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="signupPassword" placeholder="••••••••">
+          </div>
+          <button class="btn btn-primary" style="width:100%" onclick="signup()">Create Account</button>
+          
+          <div class="divider"><span>OR</span></div>
+          
+          <button class="btn btn-outline" style="width:100%" onclick="googleSignIn()">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Continue with Google
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Account Section -->
+  <div id="account" class="section">
+    <div class="container">
+      <div class="card">
+        <div class="card-header">My Account</div>
+        <div id="accountContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Seller Application Section -->
+  <div id="sellerApplication" class="section">
+    <div class="container">
+      <div class="card">
+        <div class="card-header">Apply as Seller</div>
+        <div class="input-group">
+          <label>Seller Name</label>
+          <input type="text" id="sellerName" placeholder="Juan Dela Cruz">
+        </div>
+        <div class="input-group">
+          <label>Shop Name</label>
+          <input type="text" id="shopName" placeholder="Juan's Store">
+        </div>
+        <div class="input-group">
+          <label>Contact Number</label>
+          <input type="tel" id="contactNumber" placeholder="+63 912 345 6789">
+        </div>
+        <div class="input-group">
+          <label>Email</label>
+          <input type="email" id="sellerEmail" placeholder="shop@email.com">
+        </div>
+        <button class="btn btn-primary" onclick="applyAsSeller()">Submit Application</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Seller Dashboard -->
+  <div id="sellerDashboard" class="section">
+    <div class="container">
+      <div class="card">
+        <div class="card-header">Seller Dashboard</div>
+        <button class="btn btn-primary" onclick="showAddProductModal()">Add Product</button>
+        <div id="sellerProducts" class="product-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Section -->
+  <div id="cart" class="section">
+    <div class="container">
+      <div class="card">
+        <div class="card-header">Shopping Cart</div>
+        <div id="cartItems"></div>
+        <div id="cartSummary"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkout Section -->
+  <div id="checkout" class="section">
+    <div class="container">
+      <div class="card">
+        <div class="card-header">Checkout</div>
+        <div id="checkoutContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Orders Section -->
+  <div id="orders" class="section">
+    <div class="container">
+      <div class="card">
+        <div class="card-header">My Orders</div>
+        <div id="ordersList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Section -->
+  <div id="settings" class="section">
+    <div class="container">
+      <div class="card">
+        <div class="card-header">Settings</div>
+        <div id="settingsContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="adminPanel" class="section">
+    <div class="container">
+      <div class="card">
+        <div class="card-header">Admin Panel</div>
+        <div id="adminContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Detail Modal -->
+  <div id="productModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="productModalTitle"></h3>
+        <button class="modal-close" onclick="closeModal('productModal')">&times;</button>
+      </div>
+      <div class="modal-body" id="productModalBody"></div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Product Modal -->
+  <div id="addProductModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="productFormTitle">Add Product</h3>
+        <button class="modal-close" onclick="closeModal('addProductModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editProductId">
+        <div class="input-group">
+          <label>Product Name</label>
+          <input type="text" id="productName" placeholder="Product Name">
+        </div>
+        <div class="input-group">
+          <label>Price (₱)</label>
+          <input type="number" id="productPrice" placeholder="0.00" step="0.01">
+        </div>
+        <div class="input-group">
+          <label>Stock</label>
+          <input type="number" id="productStock" placeholder="0">
+        </div>
+        <div class="input-group">
+          <label>Description</label>
+          <textarea id="productDescription" placeholder="Product description..."></textarea>
+        </div>
+        <div class="input-group">
+          <label>Variants (comma-separated, optional)</label>
+          <input type="text" id="productVariants" placeholder="Small, Medium, Large">
+        </div>
+        <div class="input-group">
+          <label>Images (up to 3)</label>
+          <div class="image-preview-grid" id="imagePreviewGrid">
+            <div class="image-preview" onclick="triggerImageUpload(0)">
+              <span>+</span>
+              <input type="file" id="imageUpload0" accept="image/*" style="display:none" onchange="handleImageUpload(0)">
+            </div>
+            <div class="image-preview" onclick="triggerImageUpload(1)">
+              <span>+</span>
+              <input type="file" id="imageUpload1" accept="image/*" style="display:none" onchange="handleImageUpload(1)">
+            </div>
+            <div class="image-preview" onclick="triggerImageUpload(2)">
+              <span>+</span>
+              <input type="file" id="imageUpload2" accept="image/*" style="display:none" onchange="handleImageUpload(2)">
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rating Modal -->
+  <div id="ratingModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Rate Product</h3>
+        <button class="modal-close" onclick="closeModal('ratingModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="ratingProductId">
+        <div class="rating-stars" id="ratingStars"></div>
+        <div class="input-group">
+          <label>Comment</label>
+          <textarea id="ratingComment" placeholder="Share your experience..."></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="submitRating()">Submit Rating</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Firebase Imports
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, updateProfile, updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getFirestore, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, collection, query, where, orderBy, limit, serverTimestamp, runTransaction, writeBatch, arrayUnion } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBOTajyBGmJ0isYijswBxpmnQYPc77TQEQ",
+      authDomain: "pinoycart-8f39e.firebaseapp.com",
+      projectId: "pinoycart-8f39e",
+      storageBucket: "pinoycart-8f39e.firebasestorage.app",
+      messagingSenderId: "116180067692",
+      appId: "1:116180067692:web:6a6f12e76d0320f3e5bf49",
+      measurementId: "G-GB06467F1N"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Global State
+    let currentUser = null;
+    let userProfile = null;
+    let currentCart = [];
+    let productImages = ['', '', ''];
+    let currentRating = 0;
+
+    // Show Toast
+    window.showToast = (message, type = 'info') => {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = `toast ${type} show`;
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    };
+
+    // Show Section
+    window.showSection = (sectionId) => {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(sectionId).classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+      
+      if (sectionId === 'home') loadProducts();
+      if (sectionId === 'cart') loadCart();
+      if (sectionId === 'account') loadAccount();
+      if (sectionId === 'orders') loadOrders();
+      if (sectionId === 'sellerDashboard') loadSellerProducts();
+      if (sectionId === 'adminPanel') loadAdminPanel();
+    };
+
+    // Modal Functions
+    window.closeModal = (modalId) => {
+      document.getElementById(modalId).classList.remove('active');
+    };
+
+    // Auth Functions
+    window.switchAuthTab = (tab) => {
+      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      if (tab === 'login') {
+        document.getElementById('loginForm').style.display = 'block';
+        document.getElementById('signupForm').style.display = 'none';
+      } else {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('signupForm').style.display = 'block';
+      }
+    };
+
+    window.signup = async () => {
+      const email = document.getElementById('signupEmail').value;
+      const password = document.getElementById('signupPassword').value;
+      const username = document.getElementById('signupUsername').value;
+
+      if (!email || !password || !username) {
+        showToast('Please fill all fields', 'error');
+        return;
+      }
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(userCredential.user, { displayName: username });
+        
+        await setDoc(doc(db, 'users', userCredential.user.uid), {
+          email,
+          username,
+          role: 'user',
+          coins: 0,
+          createdAt: serverTimestamp()
+        });
+
+        await setDoc(doc(db, 'carts', userCredential.user.uid), {
+          items: [],
+          updatedAt: serverTimestamp()
+        });
+
+        showToast('Account created successfully!', 'success');
+        showSection('home');
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    };
+
+    window.login = async () => {
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      if (!email || !password) {
+        showToast('Please fill all fields', 'error');
+        return;
+      }
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        showToast('Logged in successfully!', 'success');
+        showSection('home');
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    };
+
+    window.googleSignIn = async () => {
+      const provider = new GoogleAuthProvider();
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const userDoc = await getDoc(doc(db, 'users', result.user.uid));
+        
+        if (!userDoc.exists()) {
+          await setDoc(doc(db, 'users', result.user.uid), {
+            email: result.user.email,
+            username: result.user.displayName,
+            role: 'user',
+            coins: 0,
+            createdAt: serverTimestamp()
+          });
+
+          await setDoc(doc(db, 'carts', result.user.uid), {
+            items: [],
+            updatedAt: serverTimestamp()
+          });
+        }
+
+        showToast('Logged in successfully!', 'success');
+        showSection('home');
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    };
+
+    window.logout = async () => {
+      try {
+        await signOut(auth);
+        showToast('Logged out successfully', 'success');
+        showSection('home');
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    };
+
+    // Load Products
+    window.loadProducts = async () => {
+      const grid = document.getElementById('productGrid');
+      grid.innerHTML = '<div class="skeleton" style="height:300px"></div>'.repeat(6);
+
+      try {
+        const q = query(collection(db, 'products'), where('active', '==', true));
+        const snapshot = await getDocs(q);
+        
+        if (snapshot.empty) {
+          grid.innerHTML = '<div class="empty-state"><p>No products available</p></div>';
+          return;
+        }
+
+        grid.innerHTML = '';
+        snapshot.forEach(doc => {
+          const product = { id: doc.id, ...doc.data() };
+          const card = createProductCard(product);
+          grid.appendChild(card);
+        });
+      } catch (error) {
+        showToast('Error loading products', 'error');
+        grid.innerHTML = '<div class="empty-state"><p>Error loading products</p></div>';
+      }
+    };
+
+    function createProductCard(product) {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.onclick = () => showProductDetail(product);
+
+      const avgRating = product.ratings?.length > 0 
+        ? (product.ratings.reduce((a, b) => a + b.rating, 0) / product.ratings.length).toFixed(1)
+        : 'No ratings';
+
+      card.innerHTML = `
+        <img src="${product.images?.[0] || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23f0f0f0" width="200" height="200"/%3E%3C/svg%3E'}" 
+             alt="${product.name}" class="product-image">
+        <div class="product-info">
+          <div class="product-name">${product.name}</div>
+          <div class="product-price">₱${parseFloat(product.price).toFixed(2)}</div>
+          <div style="font-size:0.85rem;color:var(--text-gray)">
+            ⭐ ${avgRating} ${product.ratings?.length ? `(${product.ratings.length})` : ''}
+          </div>
+          <div class="product-actions" onclick="event.stopPropagation()">
+            <button class="btn btn-primary" style="flex:1;padding:0.5rem" onclick="addToCart('${product.id}')">Add to Cart</button>
+          </div>
+        </div>
+      `;
+      return card;
+    }
+
+    window.showProductDetail = async (product) => {
+      const modal = document.getElementById('productModal');
+      const title = document.getElementById('productModalTitle');
+      const body = document.getElementById('productModalBody');
+
+      title.textContent = product.name;
+
+      const avgRating = product.ratings?.length > 0 
+        ? (product.ratings.reduce((a, b) => a + b.rating, 0) / product.ratings.length).toFixed(1)
+        : 0;
+
+      body.innerHTML = `
+        <div style="display:grid;gap:1rem">
+          ${product.images?.filter(img => img).map(img => 
+            `<img src="${img}" style="width:100%;border-radius:8px" alt="${product.name}">`
+          ).join('') || '<div style="height:300px;background:var(--bg-light);border-radius:8px"></div>'}
+          
+          <div>
+            <div style="font-size:2rem;font-weight:700;color:var(--red);margin-bottom:0.5rem">
+              ₱${parseFloat(product.price).toFixed(2)}
+            </div>
+            <div style="margin-bottom:1rem;color:var(--text-gray)">
+              ⭐ ${avgRating} ${product.ratings?.length ? `(${product.ratings.length} ratings)` : '(No ratings yet)'}
+            </div>
+            <p style="margin-bottom:1rem">${product.description}</p>
+            <div style="color:var(--text-gray);margin-bottom:1rem">Stock: ${product.stock}</div>
+            
+            ${product.variants?.length > 0 ? `
+              <div class="input-group">
+                <label>Select Variant</label>
+                <select id="selectedVariant">
+                  ${product.variants.map(v => `<option value="${v}">${v}</option>`).join('')}
+                </select>
+              </div>
+            ` : ''}
+            
+            <div class="input-group">
+              <label>Quantity</label>
+              <div class="qty-control">
+                <button onclick="changeQty(-1)">-</button>
+                <input type="number" id="productQty" value="1" min="1" max="${product.stock}" style="width:60px;text-align:center;border:none">
+                <button onclick="changeQty(1)">+</button>
+              </div>
+            </div>
+            
+            <button class="btn btn-primary" style="width:100%" onclick="addToCart('${product.id}')">Add to Cart</button>
+          </div>
+
+          ${product.ratings?.length > 0 ? `
+            <div style="border-top:1px solid var(--border);padding-top:1rem">
+              <h4 style="margin-bottom:1rem">Customer Reviews</h4>
+              ${product.ratings.map(r => `
+                <div style="padding:1rem;background:var(--bg-light);border-radius:6px;margin-bottom:0.5rem">
+                  <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem">
+                    ${'⭐'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}
+                  </div>
+                  <div style="font-size:0.9rem">${r.comment || ''}</div>
+                  <div style="font-size:0.8rem;color:var(--text-gray);margin-top:0.5rem">
+                    ${r.username} - ${new Date(r.createdAt?.toDate()).toLocaleDateString()}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+        </div>
+      `;
+
+      modal.classList.add('active');
+    };
+
+    window.changeQty = (delta) => {
+      const input = document.getElementById('productQty');
+      const newVal = parseInt(input.value) + delta;
+      if (newVal >= 1 && newVal <= parseInt(input.max)) {
+        input.value = newVal;
+      }
+    };
+
+    window.addToCart = async (productId) => {
+      if (!currentUser) {
+        showToast('Please login to add items to cart', 'error');
+        showSection('auth');
+        return;
+      }
+
+      try {
+        const productDoc = await getDoc(doc(db, 'products', productId));
+        if (!productDoc.exists()) {
+          showToast('Product not found', 'error');
+          return;
+        }
+
+        const product = productDoc.data();
+        const qtyInput = document.getElementById('productQty');
+        const qty = qtyInput ? parseInt(qtyInput.value) : 1;
+        const variantSelect = document.getElementById('selectedVariant');
+        const variant = variantSelect ? variantSelect.value : '';
+
+        if (qty > product.stock) {
+          showToast('Not enough stock', 'error');
+          return;
+        }
+
+        const cartRef = doc(db, 'carts', currentUser.uid);
+        const cartDoc = await getDoc(cartRef);
+        let items = cartDoc.exists() ? cartDoc.data().items || [] : [];
+
+        const existingIndex = items.findIndex(i => i.productId === productId && i.variant === variant);
+        
+        if (existingIndex >= 0) {
+          items[existingIndex].qty += qty;
+        } else {
+          items.push({
+            productId,
+            name: product.name,
+            price: product.price,
+            variant,
+            qty,
+            image: product.images?.[0] || ''
+          });
+        }
+
+        await setDoc(cartRef, { items, updatedAt: serverTimestamp() });
+        
+        showToast('Added to cart!', 'success');
+        updateCartBadge();
+        closeModal('productModal');
+      } catch (error) {
+        showToast('Error adding to cart', 'error');
+      }
+    };
+
+    window.loadCart = async () => {
+      const container = document.getElementById('cartItems');
+      const summary = document.getElementById('cartSummary');
+
+      if (!currentUser) {
+        container.innerHTML = '<div class="empty-state"><p>Please login to view cart</p></div>';
+        summary.innerHTML = '';
+        return;
+      }
+
+      try {
+        const cartDoc = await getDoc(doc(db, 'carts', currentUser.uid));
+        const items = cartDoc.exists() ? cartDoc.data().items || [] : [];
+
+        if (items.length === 0) {
+          container.innerHTML = '<div class="empty-state"><p>Your cart is empty</p></div>';
+          summary.innerHTML = '';
+          return;
+        }
+
+        container.innerHTML = items.map((item, index) => `
+          <div class="cart-item">
+            <img src="${item.image || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="80"%3E%3Crect fill="%23f0f0f0" width="80" height="80"/%3E%3C/svg%3E'}" 
+                 alt="${item.name}" class="cart-item-image">
+            <div class="cart-item-info">
+              <div style="font-weight:600">${item.name}</div>
+              ${item.variant ? `<div style="font-size:0.85rem;color:var(--text-gray)">${item.variant}</div>` : ''}
+              <div style="color:var(--red);font-weight:600;margin-top:0.5rem">₱${parseFloat(item.price).toFixed(2)}</div>
+            </div>
+            <div class="cart-item-actions">
+              <div class="qty-control">
+                <button onclick="updateCartQty(${index}, -1)">-</button>
+                <span style="padding:0 0.5rem">${item.qty}</span>
+                <button onclick="updateCartQty(${index}, 1)">+</button>
+              </div>
+              <button class="icon-btn" onclick="removeFromCart(${index})">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        `).join('');
+
+        const subtotal = items.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+        summary.innerHTML = `
+          <div style="border-top:1px solid var(--border);padding-top:1rem;margin-top:1rem">
+            <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem">
+              <span>Subtotal:</span>
+              <span style="font-weight:600">₱${subtotal.toFixed(2)}</span>
+            </div>
+            <div class="input-group">
+              <input type="text" id="voucherCode" placeholder="Enter voucher code">
+            </div>
+            <button class="btn btn-primary" style="width:100%" onclick="proceedToCheckout()">Proceed to Checkout</button>
+          </div>
+        `;
+      } catch (error) {
+        showToast('Error loading cart', 'error');
+      }
+    };
+
+    window.updateCartQty = async (index, delta) => {
+      try {
+        const cartRef = doc(db, 'carts', currentUser.uid);
+        const cartDoc = await getDoc(cartRef);
+        let items = cartDoc.data().items;
+
+        items[index].qty += delta;
+        if (items[index].qty <= 0) {
+          items.splice(index, 1);
+        }
+
+        await updateDoc(cartRef, { items, updatedAt: serverTimestamp() });
+        loadCart();
+        updateCartBadge();
+      } catch (error) {
+        showToast('Error updating cart', 'error');
+      }
+    };
+
+    window.removeFromCart = async (index) => {
+      try {
+        const cartRef = doc(db, 'carts', currentUser.uid);
+        const cartDoc = await getDoc(cartRef);
+        let items = cartDoc.data().items;
+
+        items.splice(index, 1);
+        await updateDoc(cartRef, { items, updatedAt: serverTimestamp() });
+        
+        loadCart();
+        updateCartBadge();
+        showToast('Item removed', 'success');
+      } catch (error) {
+        showToast('Error removing item', 'error');
+      }
+    };
+
+    window.updateCartBadge = async () => {
+      if (!currentUser) {
+        document.getElementById('cartBadge').textContent = '0';
+        return;
+      }
+
+      try {
+        const cartDoc = await getDoc(doc(db, 'carts', currentUser.uid));
+        const items = cartDoc.exists() ? cartDoc.data().items || [] : [];
+        const total = items.reduce((sum, item) => sum + item.qty, 0);
+        document.getElementById('cartBadge').textContent = total;
+      } catch (error) {
+        console.error('Error updating cart badge:', error);
+      }
+    };
+
+    window.proceedToCheckout = async () => {
+      const cartDoc = await getDoc(doc(db, 'carts', currentUser.uid));
+      const items = cartDoc.data().items || [];
+
+      if (items.length === 0) {
+        showToast('Cart is empty', 'error');
+        return;
+      }
+
+      showSection('checkout');
+      await loadCheckout();
+    };
+
+    window.loadCheckout = async () => {
+      const container = document.getElementById('checkoutContent');
+      
+      const cartDoc = await getDoc(doc(db, 'carts', currentUser.uid));
+      const items = cartDoc.data().items || [];
+      const subtotal = items.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+      const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+      const billing = userDoc.data().billing || {};
+
+      container.innerHTML = `
+        <div style="display:grid;gap:1.5rem">
+          <div>
+            <h4 style="margin-bottom:1rem">Billing Information</h4>
+            <div class="input-group">
+              <label>Full Name</label>
+              <input type="text" id="billingName" value="${billing.name || ''}" placeholder="Juan Dela Cruz">
+            </div>
+            <div class="input-group">
+              <label>Address</label>
+              <textarea id="billingAddress" placeholder="Complete address">${billing.address || ''}</textarea>
+            </div>
+            <div class="input-group">
+              <label>Phone</label>
+              <input type="tel" id="billingPhone" value="${billing.phone || ''}" placeholder="+63 912 345 6789">
+            </div>
+          </div>
+
+          <div>
+            <h4 style="margin-bottom:1rem">Payment Method</h4>
+            <div class="input-group">
+              <select id="paymentMethod" onchange="togglePaymentFields()">
+                <option value="">Select payment method</option>
+                <option value="bank">Bank Transfer</option>
+                <option value="gcash">GCash</option>
+                <option value="cod">Cash on Delivery</option>
+              </select>
+            </div>
+            <div id="paymentFields"></div>
+          </div>
+
+          <div>
+            <h4 style="margin-bottom:1rem">Order Summary</h4>
+            ${items.map(item => `
+              <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem">
+                <span>${item.name} ${item.variant ? `(${item.variant})` : ''} x${item.qty}</span>
+                <span>₱${(item.price * item.qty).toFixed(2)}</span>
+              </div>
+            `).join('')}
+            <div style="border-top:1px solid var(--border);margin-top:1rem;padding-top:1rem">
+              <div style="display:flex;justify-content:space-between;font-weight:600;font-size:1.25rem">
+                <span>Total:</span>
+                <span style="color:var(--red)">₱${subtotal.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" style="width:100%" onclick="placeOrder()">Place Order</button>
+        </div>
+      `;
+    };
+
+    window.togglePaymentFields = () => {
+      const method = document.getElementById('paymentMethod').value;
+      const container = document.getElementById('paymentFields');
+
+      if (method === 'bank') {
+        container.innerHTML = `
+          <div class="input-group">
+            <label>Bank Name</label>
+            <input type="text" id="bankName" placeholder="BDO, BPI, etc.">
+          </div>
+          <div class="input-group">
+            <label>Account Number</label>
+            <input type="text" id="accountNumber" placeholder="1234567890">
+          </div>
+          <div class="input-group">
+            <label>Account Name</label>
+            <input type="text" id="accountName" placeholder="Juan Dela Cruz">
+          </div>
+        `;
+      } else if (method === 'gcash') {
+        container.innerHTML = `
+          <div class="input-group">
+            <label>GCash Number</label>
+            <input type="tel" id="gcashNumber" placeholder="09123456789">
+          </div>
+          <div class="input-group">
+            <label>Account Name</label>
+            <input type="text" id="gcashName" placeholder="Juan Dela Cruz">
+          </div>
+        `;
+      } else if (method === 'cod') {
+        container.innerHTML = '<p style="color:var(--text-gray)">Pay when you receive your order</p>';
+      } else {
+        container.innerHTML = '';
+      }
+    };
+
+    window.placeOrder = async () => {
+      const billingName = document.getElementById('billingName').value;
+      const billingAddress = document.getElementById('billingAddress').value;
+      const billingPhone = document.getElementById('billingPhone').value;
+      const paymentMethod = document.getElementById('paymentMethod').value;
+
+      if (!billingName || !billingAddress || !billingPhone) {
+        showToast('Please fill billing information', 'error');
+        return;
+      }
+
+      if (!paymentMethod) {
+        showToast('Please select a payment method', 'error');
+        return;
+      }
+
+      let paymentInfo = { method: paymentMethod };
+
+      if (paymentMethod === 'bank') {
+        const bankName = document.getElementById('bankName').value;
+        const accountNumber = document.getElementById('accountNumber').value;
+        const accountName = document.getElementById('accountName').value;
+        
+        if (!bankName || !accountNumber || !accountName) {
+          showToast('Please fill all bank details', 'error');
+          return;
+        }
+        
+        paymentInfo = { ...paymentInfo, bankName, accountNumber, accountName };
+      } else if (paymentMethod === 'gcash') {
+        const gcashNumber = document.getElementById('gcashNumber').value;
+        const gcashName = document.getElementById('gcashName').value;
+        
+        if (!gcashNumber || !gcashName) {
+          showToast('Please fill all GCash details', 'error');
+          return;
+        }
+        
+        paymentInfo = { ...paymentInfo, gcashNumber, gcashName };
+      }
+
+      try {
+        const cartRef = doc(db, 'carts', currentUser.uid);
+        const cartDoc = await getDoc(cartRef);
+        const items = cartDoc.data().items || [];
+
+        // Validate stock using transaction
+        await runTransaction(db, async (transaction) => {
+          const stockChecks = [];
+          
+          for (const item of items) {
+            const productRef = doc(db, 'products', item.productId);
+            const productDoc = await transaction.get(productRef);
+            
+            if (!productDoc.exists()) {
+              throw new Error(`Product ${item.name} not found`);
+            }
+            
+            const product = productDoc.data();
+            if (product.stock < item.qty) {
+              throw new Error(`Not enough stock for ${item.name}`);
+            }
+            
+            stockChecks.push({ ref: productRef, newStock: product.stock - item.qty });
+          }
+
+          // Create order
+          const orderId = doc(collection(db, 'orders')).id;
+          const orderRef = doc(db, 'orders', orderId);
+          
+          const subtotal = items.reduce((sum, item) => sum + (item.price * item.qty), 0);
+          
+          transaction.set(orderRef, {
+            uid: currentUser.uid,
+            items: items.map(i => ({
+              productId: i.productId,
+              name: i.name,
+              variant: i.variant,
+              qty: i.qty,
+              price: i.price
+            })),
+            subtotal,
+            discount: 0,
+            total: subtotal,
+            billingSnapshot: {
+              name: billingName,
+              address: billingAddress,
+              phone: billingPhone
+            },
+            paymentMethod: paymentInfo.method,
+            paymentInfo,
+            status: 'pending',
+            createdAt: serverTimestamp()
+          });
+
+          // Update stock
+          for (const check of stockChecks) {
+            transaction.update(check.ref, { stock: check.newStock });
+          }
+
+          // Clear cart
+          transaction.set(cartRef, { items: [], updatedAt: serverTimestamp() });
+        });
+
+        // Save billing info
+        await updateDoc(doc(db, 'users', currentUser.uid), {
+          billing: {
+            name: billingName,
+            address: billingAddress,
+            phone: billingPhone
+          }
+        });
+
+        showToast('Order placed successfully!', 'success');
+        updateCartBadge();
+        showSection('orders');
+      } catch (error) {
+        showToast(error.message || 'Error placing order', 'error');
+      }
+    };
+
+    window.loadOrders = async () => {
+      const container = document.getElementById('ordersList');
+
+      if (!currentUser) {
+        container.innerHTML = '<div class="empty-state"><p>Please login to view orders</p></div>';
+        return;
+      }
+
+      try {
+        const q = query(
+          collection(db, 'orders'),
+          where('uid', '==', currentUser.uid),
+          orderBy('createdAt', 'desc')
+        );
+        const snapshot = await getDocs(q);
+
+        if (snapshot.empty) {
+          container.innerHTML = '<div class="empty-state"><p>No orders yet</p></div>';
+          return;
+        }
+
+        container.innerHTML = '';
+        snapshot.forEach(doc => {
+          const order = { id: doc.id, ...doc.data() };
+          const orderEl = document.createElement('div');
+          orderEl.className = 'order-item';
+          orderEl.innerHTML = `
+            <div class="order-header">
+              <div>
+                <div style="font-weight:600">Order #${order.id.substring(0, 8)}</div>
+                <div style="font-size:0.85rem;color:var(--text-gray)">
+                  ${order.createdAt?.toDate().toLocaleDateString()}
+                </div>
+              </div>
+              <span class="order-status ${order.status}">${order.status.toUpperCase()}</span>
+            </div>
+            ${order.items.map(item => `
+              <div style="font-size:0.9rem;margin-bottom:0.25rem">
+                ${item.name} ${item.variant ? `(${item.variant})` : ''} x${item.qty} - ₱${(item.price * item.qty).toFixed(2)}
+              </div>
+            `).join('')}
+            <div style="border-top:1px solid var(--border);margin-top:0.5rem;padding-top:0.5rem;display:flex;justify-content:space-between;align-items:center">
+              <span style="font-weight:600">Total: ₱${order.total.toFixed(2)}</span>
+              <span style="font-size:0.85rem;color:var(--text-gray)">Payment: ${order.paymentMethod.toUpperCase()}</span>
+            </div>
+            ${order.items.some(item => !item.rated) ? `
+              <button class="btn btn-outline" style="width:100%;margin-top:0.5rem" onclick="showRatingModal('${order.items[0].productId}')">
+                Rate Product
+              </button>
+            ` : ''}
+          `;
+          container.appendChild(orderEl);
+        });
+      } catch (error) {
+        showToast('Error loading orders', 'error');
+      }
+    };
+
+    window.applyAsSeller = async () => {
+      if (!currentUser) {
+        showToast('Please login first', 'error');
+        return;
+      }
+
+      const sellerName = document.getElementById('sellerName').value;
+      const shopName = document.getElementById('shopName').value;
+      const contactNumber = document.getElementById('contactNumber').value;
+      const sellerEmail = document.getElementById('sellerEmail').value;
+
+      if (!sellerName || !shopName || !contactNumber || !sellerEmail) {
+        showToast('Please fill all fields', 'error');
+        return;
+      }
+
+      try {
+        await setDoc(doc(db, 'sellers', currentUser.uid), {
+          sellerName,
+          shopName,
+          contactNumber,
+          email: sellerEmail,
+          status: 'pending',
+          createdAt: serverTimestamp()
+        });
+
+        showToast('Application submitted! Waiting for approval', 'success');
+        showSection('account');
+      } catch (error) {
+        showToast('Error submitting application', 'error');
+      }
+    };
+
+    window.showAddProductModal = () => {
+      document.getElementById('productFormTitle').textContent = 'Add Product';
+      document.getElementById('editProductId').value = '';
+      document.getElementById('productName').value = '';
+      document.getElementById('productPrice').value = '';
+      document.getElementById('productStock').value = '';
+      document.getElementById('productDescription').value = '';
+      document.getElementById('productVariants').value = '';
+      productImages = ['', '', ''];
+      updateImagePreviews();
+      document.getElementById('addProductModal').classList.add('active');
+    };
+
+    window.triggerImageUpload = (index) => {
+      document.getElementById(`imageUpload${index}`).click();
+    };
+
+    window.handleImageUpload = (index) => {
+      const file = document.getElementById(`imageUpload${index}`).files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        productImages[index] = e.target.result;
+        updateImagePreviews();
+      };
+      reader.readAsDataURL(file);
+    };
+
+    function updateImagePreviews() {
+      for (let i = 0; i < 3; i++) {
+        const container = document.getElementById('imagePreviewGrid').children[i];
+        if (productImages[i]) {
+          container.innerHTML = `
+            <img src="${productImages[i]}" alt="Preview">
+            <button class="image-preview-remove" onclick="removeImage(${i})">×</button>
+          `;
+        } else {
+          container.innerHTML = `
+            <span>+</span>
+            <input type="file" id="imageUpload${i}" accept="image/*" style="display:none" onchange="handleImageUpload(${i})">
+          `;
+        }
+      }
+    }
+
+    window.removeImage = (index) => {
+      productImages[index] = '';
+      updateImagePreviews();
+    };
+
+    window.saveProduct = async () => {
+      if (!currentUser) return;
+
+      const name = document.getElementById('productName').value;
+      const price = parseFloat(document.getElementById('productPrice').value);
+      const stock = parseInt(document.getElementById('productStock').value);
+      const description = document.getElementById('productDescription').value;
+      const variantsStr = document.getElementById('productVariants').value;
+      const variants = variantsStr ? variantsStr.split(',').map(v => v.trim()) : [];
+
+      if (!name || !price || !stock || !description) {
+        showToast('Please fill all required fields', 'error');
+        return;
+      }
+
+      const productData = {
+        name,
+        price,
+        stock,
+        description,
+        variants,
+        images: productImages.filter(img => img),
+        sellerId: currentUser.uid,
+        active: true,
+        ratings: []
+      };
+
+      try {
+        const editId = document.getElementById('editProductId').value;
+        
+        if (editId) {
+          await updateDoc(doc(db, 'products', editId), {
+            ...productData,
+            updatedAt: serverTimestamp()
+          });
+          showToast('Product updated!', 'success');
+        } else {
+          await setDoc(doc(collection(db, 'products')), {
+            ...productData,
+            createdAt: serverTimestamp()
+          });
+          showToast('Product added!', 'success');
+        }
+
+        closeModal('addProductModal');
+        loadSellerProducts();
+      } catch (error) {
+        showToast('Error saving product', 'error');
+      }
+    };
+
+    window.loadSellerProducts = async () => {
+      const container = document.getElementById('sellerProducts');
+      container.innerHTML = '<div class="skeleton" style="height:300px"></div>'.repeat(3);
+
+      try {
+        const q = query(
+          collection(db, 'products'),
+          where('sellerId', '==', currentUser.uid)
+        );
+        const snapshot = await getDocs(q);
+
+        if (snapshot.empty) {
+          container.innerHTML = '<div class="empty-state"><p>No products yet</p></div>';
+          return;
+        }
+
+        container.innerHTML = '';
+        snapshot.forEach(doc => {
+          const product = { id: doc.id, ...doc.data() };
+          const card = document.createElement('div');
+          card.className = 'product-card';
+          
+          const avgRating = product.ratings?.length > 0 
+            ? (product.ratings.reduce((a, b) => a + b.rating, 0) / product.ratings.length).toFixed(1)
+            : 'No ratings';
+
+          card.innerHTML = `
+            <img src="${product.images?.[0] || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23f0f0f0" width="200" height="200"/%3E%3C/svg%3E'}" 
+                 alt="${product.name}" class="product-image">
+            <div class="product-info">
+              <div class="product-name">${product.name}</div>
+              <div class="product-price">₱${parseFloat(product.price).toFixed(2)}</div>
+              <div style="font-size:0.85rem;color:var(--text-gray);margin-bottom:0.5rem">
+                Stock: ${product.stock} | ⭐ ${avgRating}
+              </div>
+              <div style="font-size:0.85rem;margin-bottom:0.5rem">
+                Status: <span style="color:${product.active ? 'green' : 'red'}">${product.active ? 'Active' : 'Inactive'}</span>
+              </div>
+              <div class="product-actions">
+                <button class="btn btn-outline" style="flex:1;padding:0.5rem" onclick="editProduct('${product.id}')">Edit</button>
+                <button class="btn btn-outline" style="flex:1;padding:0.5rem" onclick="toggleProductActive('${product.id}', ${!product.active})">
+                  ${product.active ? 'Deactivate' : 'Activate'}
+                </button>
+                <button class="btn btn-outline" style="padding:0.5rem" onclick="deleteProduct('${product.id}')">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      } catch (error) {
+        showToast('Error loading products', 'error');
+      }
+    };
+
+    window.editProduct = async (productId) => {
+      try {
+        const productDoc = await getDoc(doc(db, 'products', productId));
+        const product = productDoc.data();
+
+        document.getElementById('productFormTitle').textContent = 'Edit Product';
+        document.getElementById('editProductId').value = productId;
+        document.getElementById('productName').value = product.name;
+        document.getElementById('productPrice').value = product.price;
+        document.getElementById('productStock').value = product.stock;
+        document.getElementById('productDescription').value = product.description;
+        document.getElementById('productVariants').value = product.variants?.join(', ') || '';
+        
+        productImages = [...(product.images || []), '', '', ''].slice(0, 3);
+        updateImagePreviews();
+        
+        document.getElementById('addProductModal').classList.add('active');
+      } catch (error) {
+        showToast('Error loading product', 'error');
+      }
+    };
+
+    window.toggleProductActive = async (productId, active) => {
+      try {
+        await updateDoc(doc(db, 'products', productId), { active });
+        showToast(`Product ${active ? 'activated' : 'deactivated'}`, 'success');
+        loadSellerProducts();
+      } catch (error) {
+        showToast('Error updating product', 'error');
+      }
+    };
+
+    window.deleteProduct = async (productId) => {
+      if (!confirm('Are you sure you want to delete this product?')) return;
+
+      try {
+        await deleteDoc(doc(db, 'products', productId));
+        showToast('Product deleted', 'success');
+        loadSellerProducts();
+      } catch (error) {
+        showToast('Error deleting product', 'error');
+      }
+    };
+
+    window.loadAccount = async () => {
+      const container = document.getElementById('accountContent');
+
+      if (!currentUser) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <p>Please login to view your account</p>
+            <button class="btn btn-primary" onclick="showSection('auth')">Login</button>
+          </div>
+        `;
+        return;
+      }
+
+      try {
+        const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+        const userData = userDoc.data();
+        const sellerDoc = await getDoc(doc(db, 'sellers', currentUser.uid));
+        const sellerData = sellerDoc.exists() ? sellerDoc.data() : null;
+
+        container.innerHTML = `
+          <div style="display:grid;gap:1rem">
+            <div>
+              <div style="font-weight:600;margin-bottom:0.5rem">Email</div>
+              <div>${userData.email}</div>
+            </div>
+            <div>
+              <div style="font-weight:600;margin-bottom:0.5rem">Username</div>
+              <div>${userData.username}</div>
+            </div>
+            <div>
+              <div style="font-weight:600;margin-bottom:0.5rem">Role</div>
+              <div style="text-transform:capitalize">${userData.role}</div>
+            </div>
+            <div>
+              <div style="font-weight:600;margin-bottom:0.5rem">Coins Balance</div>
+              <div style="color:var(--gold);font-size:1.5rem;font-weight:700">${userData.coins || 0}</div>
+              <button class="btn btn-secondary" style="margin-top:0.5rem" onclick="claimDailyCoins()">Claim Daily Coins</button>
+            </div>
+            
+            ${sellerData ? `
+              <div style="border-top:1px solid var(--border);padding-top:1rem">
+                <div style="font-weight:600;margin-bottom:0.5rem">Seller Status</div>
+                <div style="text-transform:capitalize;color:${
+                  sellerData.status === 'approved' ? 'green' : 
+                  sellerData.status === 'pending' ? 'orange' : 'red'
+                }">${sellerData.status}</div>
+                ${sellerData.status === 'approved' ? `
+                  <button class="btn btn-primary" style="margin-top:0.5rem" onclick="showSection('sellerDashboard')">
+                    Go to Seller Dashboard
+                  </button>
+                ` : ''}
+              </div>
+            ` : `
+              <button class="btn btn-primary" onclick="showSection('sellerApplication')">Apply as Seller</button>
+            `}
+
+            <div style="border-top:1px solid var(--border);padding-top:1rem">
+              <button class="btn btn-outline" style="width:100%;margin-bottom:0.5rem" onclick="showSection('orders')">My Orders</button>
+              <button class="btn btn-outline" style="width:100%;margin-bottom:0.5rem" onclick="showSection('settings')">Settings</button>
+              ${userData.role === 'admin' ? `
+                <button class="btn btn-secondary" style="width:100%;margin-bottom:0.5rem" onclick="showSection('adminPanel')">Admin Panel</button>
+              ` : ''}
+              <button class="btn btn-outline" style="width:100%" onclick="logout()">Logout</button>
+            </div>
+          </div>
+        `;
+      } catch (error) {
+        showToast('Error loading account', 'error');
+      }
+    };
+
+    window.claimDailyCoins = async () => {
+      try {
+        const userRef = doc(db, 'users', currentUser.uid);
+        const userDoc = await getDoc(userRef);
+        const userData = userDoc.data();
+
+        const lastClaim = userData.lastDailyClaim?.toDate();
+        const now = new Date();
+        
+        if (lastClaim && now - lastClaim < 24 * 60 * 60 * 1000) {
+          const hoursLeft = Math.ceil((24 * 60 * 60 * 1000 - (now - lastClaim)) / (60 * 60 * 1000));
+          showToast(`Please wait ${hoursLeft} hours before claiming again`, 'error');
+          return;
+        }
+
+        await updateDoc(userRef, {
+          coins: (userData.coins || 0) + 10,
+          lastDailyClaim: serverTimestamp()
+        });
+
+        showToast('Claimed 10 coins!', 'success');
+        loadAccount();
+      } catch (error) {
+        showToast('Error claiming coins', 'error');
+      }
+    };
+
+    window.loadAdminPanel = async () => {
+      const container = document.getElementById('adminContent');
+
+      try {
+        const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+        if (userDoc.data().role !== 'admin') {
+          container.innerHTML = '<div class="empty-state"><p>Access denied</p></div>';
+          return;
+        }
+
+        const sellersSnapshot = await getDocs(
+          query(collection(db, 'sellers'), where('status', '==', 'pending'))
+        );
+
+        container.innerHTML = `
+          <div>
+            <h4 style="margin-bottom:1rem">Pending Seller Applications</h4>
+            ${sellersSnapshot.empty ? '<p>No pending applications</p>' : ''}
+            <div style="display:grid;gap:1rem">
+              ${sellersSnapshot.docs.map(doc => {
+                const seller = { id: doc.id, ...doc.data() };
+                return `
+                  <div class="card">
+                    <div style="font-weight:600;margin-bottom:0.5rem">${seller.shopName}</div>
+                    <div style="font-size:0.9rem;color:var(--text-gray);margin-bottom:0.5rem">
+                      Seller: ${seller.sellerName}<br>
+                      Email: ${seller.email}<br>
+                      Contact: ${seller.contactNumber}
+                    </div>
+                    <div style="display:flex;gap:0.5rem">
+                      <button class="btn btn-primary" style="flex:1" onclick="approveRejectSeller('${seller.id}', 'approved')">
+                        Approve
+                      </button>
+                      <button class="btn btn-outline" style="flex:1" onclick="approveRejectSeller('${seller.id}', 'rejected')">
+                        Reject
+                      </button>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      } catch (error) {
+        showToast('Error loading admin panel', 'error');
+      }
+    };
+
+    window.approveRejectSeller = async (sellerId, status) => {
+      try {
+        await updateDoc(doc(db, 'sellers', sellerId), { status });
+        
+        if (status === 'approved') {
+          await updateDoc(doc(db, 'users', sellerId), { role: 'seller' });
+        }
+
+        showToast(`Seller ${status}`, 'success');
+        loadAdminPanel();
+      } catch (error) {
+        showToast('Error updating seller status', 'error');
+      }
+    };
+
+    window.showRatingModal = (productId) => {
+      document.getElementById('ratingProductId').value = productId;
+      currentRating = 0;
+      document.getElementById('ratingComment').value = '';
+      
+      const starsContainer = document.getElementById('ratingStars');
+      starsContainer.innerHTML = '';
+      for (let i = 1; i <= 5; i++) {
+        const star = document.createElement('span');
+        star.className = 'star';
+        star.textContent = '★';
+        star.onclick = () => setRating(i);
+        starsContainer.appendChild(star);
+      }
+      
+      document.getElementById('ratingModal').classList.add('active');
+    };
+
+    window.setRating = (rating) => {
+      currentRating = rating;
+      const stars = document.querySelectorAll('#ratingStars .star');
+      stars.forEach((star, index) => {
+        if (index < rating) {
+          star.classList.add('filled');
+        } else {
+          star.classList.remove('filled');
+        }
+      });
+    };
+
+    window.submitRating = async () => {
+      if (currentRating === 0) {
+        showToast('Please select a rating', 'error');
+        return;
+      }
+
+      const productId = document.getElementById('ratingProductId').value;
+      const comment = document.getElementById('ratingComment').value;
+
+      try {
+        const productRef = doc(db, 'products', productId);
+        await updateDoc(productRef, {
+          ratings: arrayUnion({
+            uid: currentUser.uid,
+            username: userProfile.username,
+            rating: currentRating,
+            comment,
+            createdAt: serverTimestamp()
+          })
+        });
+
+        showToast('Rating submitted!', 'success');
+        closeModal('ratingModal');
+      } catch (error) {
+        showToast('Error submitting rating', 'error');
+      }
+    };
+
+    // Auth State Observer
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user;
+      
+      if (user) {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        userProfile = userDoc.data();
+        updateCartBadge();
+      } else {
+        userProfile = null;
+      }
+    });
+
+    // Initialize
+    loadProducts();
+  </script>
+
+  <!-- Firestore Security Rules Reference (implement in Firebase Console)
+  
+  rules_version = '2';
+  service cloud.firestore {
+    match /databases/{database}/documents {
+      
+      match /users/{userId} {
+        allow read: if request.auth != null;
+        allow write: if request.auth.uid == userId;
+      }
+      
+      match /sellers/{sellerId} {
+        allow read: if request.auth != null;
+        allow write: if request.auth.uid == sellerId;
+      }
+      
+      match /products/{productId} {
+        allow read: if true;
+        allow create: if request.auth != null && 
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['seller', 'admin'];
+        allow update, delete: if request.auth != null && 
+          (resource.data.sellerId == request.auth.uid || 
+           get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+      }
+      
+      match /carts/{cartId} {
+        allow read, write: if request.auth.uid == cartId;
+      }
+      
+      match /orders/{orderId} {
+        allow read: if request.auth != null && 
+          (resource.data.uid == request.auth.uid || 
+           get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+        allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+      }
+      
+      match /vouchers/{voucherId} {
+        allow read: if request.auth != null;
+        allow write: if request.auth != null && 
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      }
+    }
+  }
+  
+  -->
+</body>
+</html>
