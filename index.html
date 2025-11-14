@@ -805,19 +805,19 @@
               </svg>
               Orders
             </div>
-            <div class="user-menu-item" onclick="showSection('account'); toggleUserMenu()">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="7" r="4"/>
-                <path d="M5.5 21a8.38 8.38 0 0 1 13 0"/>
-              </svg>
-              My Account
-            </div>
             <div class="user-menu-item" onclick="showSection('settings'); toggleUserMenu()">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="3"/>
                 <path d="M12 1v6m0 6v6m-9-9h6m6 0h6"/>
               </svg>
               Settings
+            </div>
+            <div class="user-menu-item" onclick="showSection('account'); toggleUserMenu()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="7" r="4"/>
+                <path d="M5.5 21a8.38 8.38 0 0 1 13 0"/>
+              </svg>
+              My Account
             </div>
             <div class="user-menu-item" onclick="showSection('about'); toggleUserMenu()">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -849,14 +849,6 @@
       </svg>
       <span>Home</span>
     </button>
-    <button class="nav-item" onclick="showSection('cart')">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="9" cy="21" r="1"/>
-        <circle cx="20" cy="21" r="1"/>
-        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-      </svg>
-      <span>Cart</span>
-    </button>
     <button class="nav-item" onclick="showSection('orders')">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="3" y="3" width="7" height="7"/>
@@ -865,6 +857,14 @@
         <rect x="3" y="14" width="7" height="7"/>
       </svg>
       <span>Orders</span>
+    </button>
+    <button class="nav-item" onclick="showSection('cart')">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="9" cy="21" r="1"/>
+        <circle cx="20" cy="21" r="1"/>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+      </svg>
+      <span>Cart</span>
     </button>
     <button class="nav-item" onclick="showSection('account')">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1139,7 +1139,7 @@
         <div style="display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap">
           <button class="btn btn-outline" onclick="showAdminTab('sellers')">Pending Sellers</button>
           <button class="btn btn-outline" onclick="showAdminTab('users')">All Users</button>
-          <button class="btn btn-outline" onclick="showAdminTab('vouchers')">Vouchers & Shipping Fees</button>
+          <button class="btn btn-outline" onclick="showAdminTab('vouchers')">Vouchers & Shippings Fees</button>
         </div>
         <div id="adminContent"></div>
       </div>
@@ -2123,7 +2123,9 @@
       const shippingSettings = settingsDoc.exists() ? settingsDoc.data() : { freeShipping: false, codFee: 50 };
 
       const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
-      const billing = userDoc.data().billing || {};
+      const userData = userDoc.data();
+      const billing = userData.billing || {};
+      const userCoins = userData.coins || 0;
 
       container.innerHTML = `
         <div style="display:grid;gap:1.5rem">
@@ -2179,9 +2181,45 @@
                 <span>Shipping Fee:</span>
                 <span id="shippingFeeAmount">₱0.00</span>
               </div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem" id="coinsDiscountDisplay" style="display:none">
+                <span>Coins Discount:</span>
+                <span style="color:var(--gold)">-₱<span id="coinsDiscountAmount">0.00</span></span>
+              </div>
               <div style="display:flex;justify-content:space-between;font-weight:600;font-size:1.25rem">
                 <span>Total:</span>
                 <span style="color:var(--red)" id="checkoutTotal">₱${(subtotal - discount).toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Coins Section -->
+          <div style="background:linear-gradient(135deg,#FEF3C7,#FDE68A);padding:1.5rem;border-radius:8px;border:2px solid var(--gold)">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+              <div>
+                <h4 style="margin:0;color:#1F2937">Use Your Coins</h4>
+                <p style="margin:0.25rem 0 0 0;font-size:0.9rem;color:#374151">Available: <strong style="color:#92400E">${userCoins}</strong> coins</p>
+              </div>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="var(--gold)" stroke="var(--gold)" stroke-width="1">
+                <circle cx="12" cy="12" r="10"/>
+                <text x="12" y="16" text-anchor="middle" font-size="12" font-weight="bold" fill="#374151">₱</text>
+              </svg>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:0.5rem" id="coinsButtons">
+              ${[50, 100, 500, 1000].map(amount => `
+                <button class="btn btn-outline" 
+                  onclick="applyCoinsDiscount(${amount})" 
+                  ${userCoins < amount ? 'disabled' : ''}
+                  style="padding:0.75rem;font-weight:700;${userCoins >= amount ? 'background:var(--white);border-color:var(--gold);color:var(--gold)' : ''}"
+                  id="coinsBtn${amount}">
+                  ${amount} Coins<br>
+                  <span style="font-size:0.85rem">= ₱${amount.toFixed(2)}</span>
+                </button>
+              `).join('')}
+            </div>
+            <div id="appliedCoinsInfo" style="display:none;margin-top:1rem;padding:0.75rem;background:var(--white);border-radius:6px;border-left:4px solid var(--gold)">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span style="font-weight:600;color:var(--gold)"><span id="appliedCoinsAmount">0</span> coins applied</span>
+                <button class="btn btn-outline" style="padding:0.25rem 0.75rem;font-size:0.85rem" onclick="removeCoinsDiscount()">Remove</button>
               </div>
             </div>
           </div>
@@ -2190,8 +2228,68 @@
         </div>
       `;
       
-      // Store shipping settings globally for access
+      // Store shipping settings and user coins globally for access
       window.shippingSettings = shippingSettings;
+      window.userCoinsBalance = userCoins;
+      window.appliedCoins = 0;
+    };
+
+    window.applyCoinsDiscount = (amount) => {
+      if (window.userCoinsBalance < amount) {
+        showToast('Not enough coins', 'error');
+        return;
+      }
+
+      // Store applied coins amount
+      window.appliedCoins = amount;
+
+      // Update UI
+      document.getElementById('coinsDiscountDisplay').style.display = 'flex';
+      document.getElementById('coinsDiscountAmount').textContent = amount.toFixed(2);
+      document.getElementById('appliedCoinsInfo').style.display = 'block';
+      document.getElementById('appliedCoinsAmount').textContent = amount;
+
+      // Disable all coins buttons and highlight applied one
+      [50, 100, 500, 1000].forEach(amt => {
+        const btn = document.getElementById(`coinsBtn${amt}`);
+        if (btn) {
+          btn.disabled = true;
+          if (amt === amount) {
+            btn.style.background = 'var(--gold)';
+            btn.style.color = 'var(--white)';
+            btn.style.borderColor = 'var(--gold)';
+          }
+        }
+      });
+
+      // Recalculate total
+      updateCheckoutTotal();
+      
+      showToast(`${amount} coins applied!`, 'success');
+    };
+
+    window.removeCoinsDiscount = () => {
+      window.appliedCoins = 0;
+
+      // Update UI
+      document.getElementById('coinsDiscountDisplay').style.display = 'none';
+      document.getElementById('appliedCoinsInfo').style.display = 'none';
+
+      // Re-enable coins buttons
+      [50, 100, 500, 1000].forEach(amt => {
+        const btn = document.getElementById(`coinsBtn${amt}`);
+        if (btn && window.userCoinsBalance >= amt) {
+          btn.disabled = false;
+          btn.style.background = 'var(--white)';
+          btn.style.color = 'var(--gold)';
+          btn.style.borderColor = 'var(--gold)';
+        }
+      });
+
+      // Recalculate total
+      updateCheckoutTotal();
+      
+      showToast('Coins discount removed', 'success');
     };
 
     window.updateCheckoutTotal = async () => {
@@ -2205,6 +2303,7 @@
       const items = cartDoc.data().items || [];
       const subtotal = items.reduce((sum, item) => sum + (item.price * item.qty), 0);
       const discount = appliedVoucher ? appliedVoucher.discount : 0;
+      const coinsDiscount = window.appliedCoins || 0;
       
       // Calculate shipping fee
       let shippingFee = 0;
@@ -2225,8 +2324,8 @@
       }
       
       // Update total
-      const total = subtotal - discount + shippingFee;
-      document.getElementById('checkoutTotal').textContent = `₱${total.toFixed(2)}`;
+      const total = subtotal - discount - coinsDiscount + shippingFee;
+      document.getElementById('checkoutTotal').textContent = `₱${Math.max(0, total).toFixed(2)}`;
     };
 
     window.togglePaymentFields = () => {
@@ -2358,6 +2457,7 @@
           
           const subtotal = items.reduce((sum, item) => sum + (item.price * item.qty), 0);
           const discount = appliedVoucher ? appliedVoucher.discount : 0;
+          const coinsDiscount = window.appliedCoins || 0;
           
           // Calculate shipping fee
           let shippingFee = 0;
@@ -2369,7 +2469,7 @@
             }
           }
           
-          const total = subtotal - discount + shippingFee;
+          const total = Math.max(0, subtotal - discount - coinsDiscount + shippingFee);
           
           transaction.set(orderRef, {
             uid: currentUser.uid,
@@ -2382,6 +2482,7 @@
             })),
             subtotal,
             discount,
+            coinsDiscount,
             shippingFee,
             voucherCode: appliedVoucher ? appliedVoucher.code : null,
             total,
@@ -2414,6 +2515,14 @@
             transaction.update(userRef, { vouchersUsed: userVouchersUsed });
           }
 
+          // Deduct coins if applied
+          if (coinsDiscount > 0) {
+            const userRef = doc(db, 'users', currentUser.uid);
+            transaction.update(userRef, { 
+              coins: window.userCoinsBalance - coinsDiscount 
+            });
+          }
+
           // Clear cart
           transaction.set(cartRef, { items: [], updatedAt: serverTimestamp() });
         });
@@ -2427,8 +2536,9 @@
           }
         });
 
-        // Clear applied voucher
+        // Clear applied voucher and coins
         appliedVoucher = null;
+        window.appliedCoins = 0;
 
         showToast('Order placed successfully!', 'success');
         updateCartBadge();
@@ -2486,6 +2596,7 @@
                   Payment: ${order.paymentMethod.toUpperCase()}
                   ${order.shippingFee > 0 ? ` • Shipping: ₱${order.shippingFee.toFixed(2)}` : ''}
                   ${order.shippingFee === 0 && order.paymentMethod === 'cod' ? ' • Free Shipping' : ''}
+                  ${order.coinsDiscount > 0 ? ` • Coins Used: ${order.coinsDiscount}` : ''}
                 </div>
               </div>
             </div>
@@ -3086,7 +3197,7 @@
         }
 
         await updateDoc(userRef, {
-          coins: (userData.coins || 0) + 10,
+          coins: (userData.coins || 0) + 0.1,
           lastDailyClaim: serverTimestamp()
         });
 
@@ -3620,7 +3731,7 @@
     - active, ratings: [{uid, username, rating, comment, createdAt}]
   
   orders/{orderId}:
-    - uid, items, subtotal, discount, voucherCode, shippingFee, total
+    - uid, items, subtotal, discount, coinsDiscount, voucherCode, shippingFee, total
     - billingSnapshot, paymentMethod, paymentInfo
     - status: pending|completed|cancelled
     - cancelReason, cancelledAt
