@@ -805,6 +805,13 @@
               </svg>
               Orders
             </div>
+            <div class="user-menu-item" onclick="showSection('account'); toggleUserMenu()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="7" r="4"/>
+                <path d="M5.5 21a8.38 8.38 0 0 1 13 0"/>
+              </svg>
+              My Account
+            </div>
             <div class="user-menu-item" onclick="showSection('settings'); toggleUserMenu()">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="3"/>
@@ -842,7 +849,7 @@
       </svg>
       <span>Home</span>
     </button>
-
+    
     <button class="nav-item" onclick="showSection('cart')">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="9" cy="21" r="1"/>
@@ -851,7 +858,7 @@
       </svg>
       <span>Cart</span>
     </button>
-        <button class="nav-item" onclick="showSection('orders')">
+    <button class="nav-item" onclick="showSection('orders')">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="3" y="3" width="7" height="7"/>
         <rect x="14" y="3" width="7" height="7"/>
@@ -1133,7 +1140,7 @@
         <div style="display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap">
           <button class="btn btn-outline" onclick="showAdminTab('sellers')">Pending Sellers</button>
           <button class="btn btn-outline" onclick="showAdminTab('users')">All Users</button>
-          <button class="btn btn-outline" onclick="showAdminTab('vouchers')">Vouchers</button>
+          <button class="btn btn-outline" onclick="showAdminTab('vouchers')">Vouchers & Shipping Fees</button>
         </div>
         <div id="adminContent"></div>
       </div>
@@ -1296,7 +1303,7 @@
               Download APK (Android)
             </a>
             <p style="color:var(--white);margin-top:1rem;font-size:0.85rem;opacity:0.8">
-              Version 1.0.0 • Size: ~26.2 MB
+              Version 1.0.0 • Size: ~5MB
             </p>
           </div>
 
@@ -1868,8 +1875,22 @@
               <span>Subtotal:</span>
               <span style="font-weight:600">₱${subtotal.toFixed(2)}</span>
             </div>
+            <div id="discountDisplay" style="display:none;margin-bottom:0.5rem">
+              <div style="display:flex;justify-content:space-between;color:green">
+                <span>Discount (<span id="appliedVoucherCode"></span>):</span>
+                <span style="font-weight:600">-₱<span id="discountAmount">0.00</span></span>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:1rem;font-size:1.1rem;font-weight:700">
+              <span>Total:</span>
+              <span style="color:var(--red)" id="cartTotal">₱${subtotal.toFixed(2)}</span>
+            </div>
             <div class="input-group">
-              <input type="text" id="voucherCode" placeholder="Enter voucher code">
+              <input type="text" id="voucherCode" placeholder="Enter voucher code" style="text-transform:uppercase">
+            </div>
+            <div style="display:flex;gap:0.5rem;margin-bottom:1rem">
+              <button class="btn btn-outline" style="flex:1" onclick="applyVoucher()">Apply Voucher</button>
+              <button class="btn btn-outline" id="removeVoucherBtn" style="display:none" onclick="removeVoucher()">Remove</button>
             </div>
             <button class="btn btn-primary" style="width:100%" onclick="proceedToCheckout()">Proceed to Checkout</button>
           </div>
@@ -1877,6 +1898,116 @@
       } catch (error) {
         showToast('Error loading cart', 'error');
       }
+    };
+
+    let appliedVoucher = null;
+
+    window.applyVoucher = async () => {
+      const voucherCodeInput = document.getElementById('voucherCode');
+      const code = voucherCodeInput.value.trim().toUpperCase();
+
+      if (!code) {
+        showToast('Please enter a voucher code', 'error');
+        return;
+      }
+
+      try {
+        // Get voucher from Firestore
+        const voucherDoc = await getDoc(doc(db, 'vouchers', code));
+
+        if (!voucherDoc.exists()) {
+          showToast('Invalid voucher code', 'error');
+          return;
+        }
+
+        const voucher = voucherDoc.data();
+
+        // Validate voucher
+        if (!voucher.active) {
+          showToast('This voucher is not active', 'error');
+          return;
+        }
+
+        // Check expiry
+        if (voucher.expiresAt && new Date(voucher.expiresAt) < new Date()) {
+          showToast('This voucher has expired', 'error');
+          return;
+        }
+
+        // Check usage limit
+        if (voucher.usageLimit && voucher.usedCount >= voucher.usageLimit) {
+          showToast('This voucher has reached its usage limit', 'error');
+          return;
+        }
+
+        // Get cart items
+        const cartDoc = await getDoc(doc(db, 'carts', currentUser.uid));
+        const items = cartDoc.data().items || [];
+        const subtotal = items.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+        // Check minimum spend
+        if (voucher.minSpend && subtotal < voucher.minSpend) {
+          showToast(`Minimum spend of ₱${voucher.minSpend.toFixed(2)} required`, 'error');
+          return;
+        }
+
+        // Check per user limit
+        if (voucher.perUserLimit) {
+          const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+          const vouchersUsed = userDoc.data().vouchersUsed || {};
+          const userUsageCount = vouchersUsed[code] || 0;
+          
+          if (userUsageCount >= voucher.perUserLimit) {
+            showToast('You have reached the usage limit for this voucher', 'error');
+            return;
+          }
+        }
+
+        // Calculate discount
+        let discount = 0;
+        if (voucher.type === 'percentage') {
+          discount = (subtotal * voucher.amount) / 100;
+        } else {
+          discount = voucher.amount;
+        }
+
+        // Ensure discount doesn't exceed subtotal
+        discount = Math.min(discount, subtotal);
+
+        // Apply voucher
+        appliedVoucher = { ...voucher, code, discount };
+
+        // Update UI
+        document.getElementById('discountDisplay').style.display = 'flex';
+        document.getElementById('appliedVoucherCode').textContent = code;
+        document.getElementById('discountAmount').textContent = discount.toFixed(2);
+        document.getElementById('cartTotal').textContent = `₱${(subtotal - discount).toFixed(2)}`;
+        document.getElementById('removeVoucherBtn').style.display = 'block';
+        voucherCodeInput.disabled = true;
+
+        showToast('Voucher applied successfully!', 'success');
+      } catch (error) {
+        showToast('Error applying voucher', 'error');
+        console.error(error);
+      }
+    };
+
+    window.removeVoucher = () => {
+      appliedVoucher = null;
+      
+      // Recalculate without discount
+      const cartDoc = getDoc(doc(db, 'carts', currentUser.uid)).then(doc => {
+        const items = doc.data().items || [];
+        const subtotal = items.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        
+        document.getElementById('discountDisplay').style.display = 'none';
+        document.getElementById('cartTotal').textContent = `₱${subtotal.toFixed(2)}`;
+        document.getElementById('removeVoucherBtn').style.display = 'none';
+        document.getElementById('voucherCode').value = '';
+        document.getElementById('voucherCode').disabled = false;
+        
+        showToast('Voucher removed', 'success');
+      });
     };
 
     window.updateCartQty = async (index, delta) => {
@@ -1891,6 +2022,12 @@
         }
 
         await updateDoc(cartRef, { items, updatedAt: serverTimestamp() });
+        
+        // Clear voucher when cart changes
+        if (appliedVoucher) {
+          removeVoucher();
+        }
+        
         loadCart();
         updateCartBadge();
       } catch (error) {
@@ -1906,6 +2043,11 @@
 
         items.splice(index, 1);
         await updateDoc(cartRef, { items, updatedAt: serverTimestamp() });
+        
+        // Clear voucher when cart changes
+        if (appliedVoucher) {
+          appliedVoucher = null;
+        }
         
         loadCart();
         updateCartBadge();
@@ -1940,6 +2082,7 @@
         return;
       }
 
+      // Preserve applied voucher when going to checkout
       showSection('checkout');
       await loadCheckout();
     };
@@ -1950,6 +2093,13 @@
       const cartDoc = await getDoc(doc(db, 'carts', currentUser.uid));
       const items = cartDoc.data().items || [];
       const subtotal = items.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      
+      // Calculate discount from applied voucher
+      const discount = appliedVoucher ? appliedVoucher.discount : 0;
+      
+      // Get shipping settings
+      const settingsDoc = await getDoc(doc(db, 'settings', 'shipping'));
+      const shippingSettings = settingsDoc.exists() ? settingsDoc.data() : { freeShipping: false, codFee: 50 };
 
       const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
       const billing = userDoc.data().billing || {};
@@ -1975,7 +2125,7 @@
           <div>
             <h4 style="margin-bottom:1rem">Payment Method</h4>
             <div class="input-group">
-              <select id="paymentMethod" onchange="togglePaymentFields()">
+              <select id="paymentMethod" onchange="updateCheckoutTotal()">
                 <option value="">Select payment method</option>
                 <option value="bank">Bank Transfer</option>
                 <option value="gcash">GCash</option>
@@ -1993,10 +2143,24 @@
                 <span>₱${(item.price * item.qty).toFixed(2)}</span>
               </div>
             `).join('')}
-            <div style="border-top:1px solid var(--border);margin-top:1rem;padding-top:1rem">
+            <div style="border-top:1px solid var(--border);margin-top:1rem;padding-top:1rem" id="checkoutSummary">
+              <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem">
+                <span>Subtotal:</span>
+                <span>₱${subtotal.toFixed(2)}</span>
+              </div>
+              ${discount > 0 ? `
+                <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;color:green">
+                  <span>Discount (${appliedVoucher.code}):</span>
+                  <span>-₱${discount.toFixed(2)}</span>
+                </div>
+              ` : ''}
+              <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem" id="shippingFeeDisplay" style="display:none">
+                <span>Shipping Fee:</span>
+                <span id="shippingFeeAmount">₱0.00</span>
+              </div>
               <div style="display:flex;justify-content:space-between;font-weight:600;font-size:1.25rem">
                 <span>Total:</span>
-                <span style="color:var(--red)">₱${subtotal.toFixed(2)}</span>
+                <span style="color:var(--red)" id="checkoutTotal">₱${(subtotal - discount).toFixed(2)}</span>
               </div>
             </div>
           </div>
@@ -2004,6 +2168,44 @@
           <button class="btn btn-primary" style="width:100%" onclick="placeOrder()">Place Order</button>
         </div>
       `;
+      
+      // Store shipping settings globally for access
+      window.shippingSettings = shippingSettings;
+    };
+
+    window.updateCheckoutTotal = async () => {
+      const paymentMethod = document.getElementById('paymentMethod').value;
+      
+      // Toggle payment fields
+      togglePaymentFields();
+      
+      // Get current totals
+      const cartDoc = await getDoc(doc(db, 'carts', currentUser.uid));
+      const items = cartDoc.data().items || [];
+      const subtotal = items.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      const discount = appliedVoucher ? appliedVoucher.discount : 0;
+      
+      // Calculate shipping fee
+      let shippingFee = 0;
+      const shippingFeeDisplay = document.getElementById('shippingFeeDisplay');
+      
+      if (paymentMethod === 'cod') {
+        if (window.shippingSettings.freeShipping) {
+          shippingFee = 0;
+          shippingFeeDisplay.style.display = 'flex';
+          document.getElementById('shippingFeeAmount').innerHTML = '<span style="color:green">FREE</span>';
+        } else {
+          shippingFee = window.shippingSettings.codFee || 50;
+          shippingFeeDisplay.style.display = 'flex';
+          document.getElementById('shippingFeeAmount').textContent = `₱${shippingFee.toFixed(2)}`;
+        }
+      } else {
+        shippingFeeDisplay.style.display = 'none';
+      }
+      
+      // Update total
+      const total = subtotal - discount + shippingFee;
+      document.getElementById('checkoutTotal').textContent = `₱${total.toFixed(2)}`;
     };
 
     window.togglePaymentFields = () => {
@@ -2091,8 +2293,10 @@
 
         // Validate stock using transaction
         await runTransaction(db, async (transaction) => {
+          // IMPORTANT: All reads must come first before any writes
           const stockChecks = [];
           
+          // Read all products first
           for (const item of items) {
             const productRef = doc(db, 'products', item.productId);
             const productDoc = await transaction.get(productRef);
@@ -2109,11 +2313,34 @@
             stockChecks.push({ ref: productRef, newStock: product.stock - item.qty });
           }
 
+          // Read user data if voucher is applied (must be before writes)
+          let userVouchersUsed = {};
+          if (appliedVoucher) {
+            const userRef = doc(db, 'users', currentUser.uid);
+            const userDoc = await transaction.get(userRef);
+            userVouchersUsed = userDoc.data().vouchersUsed || {};
+          }
+
+          // NOW START WRITES - all reads are complete
+          
           // Create order
           const orderId = doc(collection(db, 'orders')).id;
           const orderRef = doc(db, 'orders', orderId);
           
           const subtotal = items.reduce((sum, item) => sum + (item.price * item.qty), 0);
+          const discount = appliedVoucher ? appliedVoucher.discount : 0;
+          
+          // Calculate shipping fee
+          let shippingFee = 0;
+          if (paymentInfo.method === 'cod') {
+            if (window.shippingSettings.freeShipping) {
+              shippingFee = 0;
+            } else {
+              shippingFee = window.shippingSettings.codFee || 50;
+            }
+          }
+          
+          const total = subtotal - discount + shippingFee;
           
           transaction.set(orderRef, {
             uid: currentUser.uid,
@@ -2125,8 +2352,10 @@
               price: i.price
             })),
             subtotal,
-            discount: 0,
-            total: subtotal,
+            discount,
+            shippingFee,
+            voucherCode: appliedVoucher ? appliedVoucher.code : null,
+            total,
             billingSnapshot: {
               name: billingName,
               address: billingAddress,
@@ -2143,6 +2372,19 @@
             transaction.update(check.ref, { stock: check.newStock });
           }
 
+          // Update voucher usage if applied
+          if (appliedVoucher) {
+            const voucherRef = doc(db, 'vouchers', appliedVoucher.code);
+            transaction.update(voucherRef, {
+              usedCount: (appliedVoucher.usedCount || 0) + 1
+            });
+
+            // Update user's voucher usage (data already read above)
+            const userRef = doc(db, 'users', currentUser.uid);
+            userVouchersUsed[appliedVoucher.code] = (userVouchersUsed[appliedVoucher.code] || 0) + 1;
+            transaction.update(userRef, { vouchersUsed: userVouchersUsed });
+          }
+
           // Clear cart
           transaction.set(cartRef, { items: [], updatedAt: serverTimestamp() });
         });
@@ -2155,6 +2397,9 @@
             phone: billingPhone
           }
         });
+
+        // Clear applied voucher
+        appliedVoucher = null;
 
         showToast('Order placed successfully!', 'success');
         updateCartBadge();
@@ -2206,8 +2451,14 @@
               </div>
             `).join('')}
             <div style="border-top:1px solid var(--border);margin-top:0.5rem;padding-top:0.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem">
-              <span style="font-weight:600">Total: ₱${order.total.toFixed(2)}</span>
-              <span style="font-size:0.85rem;color:var(--text-gray)">Payment: ${order.paymentMethod.toUpperCase()}</span>
+              <div>
+                <div style="font-weight:600;margin-bottom:0.25rem">Total: ₱${order.total.toFixed(2)}</div>
+                <div style="font-size:0.85rem;color:var(--text-gray)">
+                  Payment: ${order.paymentMethod.toUpperCase()}
+                  ${order.shippingFee > 0 ? ` • Shipping: ₱${order.shippingFee.toFixed(2)}` : ''}
+                  ${order.shippingFee === 0 && order.paymentMethod === 'cod' ? ' • Free Shipping' : ''}
+                </div>
+              </div>
             </div>
             ${order.cancelReason ? `
               <div style="background:var(--bg-light);padding:0.75rem;border-radius:6px;margin-top:0.5rem">
@@ -2940,9 +3191,39 @@
 
     async function loadVouchers(container) {
       const vouchersSnapshot = await getDocs(collection(db, 'vouchers'));
+      
+      // Get shipping settings
+      const settingsDoc = await getDoc(doc(db, 'settings', 'shipping'));
+      const shippingSettings = settingsDoc.exists() ? settingsDoc.data() : { freeShipping: false, codFee: 50 };
 
       container.innerHTML = `
         <div>
+          <!-- Shipping Settings Section -->
+          <div style="background:var(--bg-light);padding:1.5rem;border-radius:8px;margin-bottom:2rem">
+            <h4 style="margin-bottom:1rem">Shipping Settings</h4>
+            <div style="display:grid;gap:1rem">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div>
+                  <div style="font-weight:600;margin-bottom:0.25rem">Free Shipping</div>
+                  <div style="font-size:0.85rem;color:var(--text-gray)">Enable free shipping for all Cash on Delivery orders</div>
+                </div>
+                <label style="position:relative;display:inline-block;width:60px;height:30px">
+                  <input type="checkbox" id="freeShippingToggle" ${shippingSettings.freeShipping ? 'checked' : ''} onchange="toggleFreeShipping()" style="opacity:0;width:0;height:0">
+                  <span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:${shippingSettings.freeShipping ? 'var(--blue)' : '#ccc'};border-radius:30px;transition:0.4s"></span>
+                  <span style="position:absolute;content:'';height:22px;width:22px;left:4px;bottom:4px;background:white;border-radius:50%;transition:0.4s;transform:${shippingSettings.freeShipping ? 'translateX(30px)' : 'translateX(0)'}"></span>
+                </label>
+              </div>
+              <div style="display:${shippingSettings.freeShipping ? 'none' : 'block'}">
+                <label style="font-weight:600;display:block;margin-bottom:0.5rem">COD Shipping Fee (₱)</label>
+                <div style="display:flex;gap:0.5rem">
+                  <input type="number" id="codFeeInput" value="${shippingSettings.codFee || 50}" step="0.01" style="flex:1;padding:0.5rem;border:1px solid var(--border);border-radius:6px">
+                  <button class="btn btn-primary" onclick="updateShippingFee()">Update</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vouchers Section -->
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
             <h4>Vouchers</h4>
             <button class="btn btn-primary" onclick="showCreateVoucherModal()">Create Voucher</button>
@@ -2990,6 +3271,45 @@
       `;
     }
 
+    window.toggleFreeShipping = async () => {
+      const isEnabled = document.getElementById('freeShippingToggle').checked;
+      
+      try {
+        await setDoc(doc(db, 'settings', 'shipping'), {
+          freeShipping: isEnabled,
+          codFee: isEnabled ? 0 : (parseFloat(document.getElementById('codFeeInput')?.value) || 50),
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+
+        showToast(`Free shipping ${isEnabled ? 'enabled' : 'disabled'}`, 'success');
+        loadAdminPanel();
+      } catch (error) {
+        showToast('Error updating shipping settings', 'error');
+      }
+    };
+
+    window.updateShippingFee = async () => {
+      const fee = parseFloat(document.getElementById('codFeeInput').value);
+      
+      if (isNaN(fee) || fee < 0) {
+        showToast('Please enter a valid fee amount', 'error');
+        return;
+      }
+
+      try {
+        await setDoc(doc(db, 'settings', 'shipping'), {
+          freeShipping: false,
+          codFee: fee,
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+
+        showToast('Shipping fee updated', 'success');
+        loadAdminPanel();
+      } catch (error) {
+        showToast('Error updating shipping fee', 'error');
+      }
+    };
+
     window.toggleUserSuspension = async (userId, suspend) => {
       if (!confirm(`Are you sure you want to ${suspend ? 'suspend' : 'unsuspend'} this user?`)) return;
 
@@ -3018,21 +3338,26 @@
     };
 
     window.createVoucher = async () => {
-      const code = document.getElementById('voucherCode').value.toUpperCase();
+      const code = document.getElementById('voucherCode').value.trim().toUpperCase();
       const type = document.getElementById('voucherType').value;
       const amount = parseFloat(document.getElementById('voucherAmount').value);
-      const minSpend = parseFloat(document.getElementById('voucherMinSpend').value) || 0;
-      const usageLimit = parseInt(document.getElementById('voucherUsageLimit').value) || 0;
-      const perUserLimit = parseInt(document.getElementById('voucherPerUserLimit').value) || 0;
+      const minSpend = parseFloat(document.getElementById('voucherMinSpend').value);
+      const usageLimit = parseInt(document.getElementById('voucherUsageLimit').value);
+      const perUserLimit = parseInt(document.getElementById('voucherPerUserLimit').value);
       const expiry = document.getElementById('voucherExpiry').value;
 
-      if (!code || !amount) {
-        showToast('Please fill required fields', 'error');
+      if (!code || !type || !amount || isNaN(amount)) {
+        showToast('Please fill required fields (code, type, and amount)', 'error');
         return;
       }
 
       if (type === 'percentage' && (amount <= 0 || amount > 100)) {
         showToast('Percentage must be between 1 and 100', 'error');
+        return;
+      }
+
+      if (type === 'fixed' && amount <= 0) {
+        showToast('Fixed amount must be greater than 0', 'error');
         return;
       }
 
@@ -3048,9 +3373,9 @@
           code,
           type,
           amount,
-          minSpend,
-          usageLimit,
-          perUserLimit,
+          minSpend: isNaN(minSpend) ? 0 : minSpend,
+          usageLimit: isNaN(usageLimit) ? 0 : usageLimit,
+          perUserLimit: isNaN(perUserLimit) ? 0 : perUserLimit,
           expiresAt: expiry || null,
           active: true,
           usedCount: 0,
@@ -3061,7 +3386,8 @@
         closeModal('createVoucherModal');
         loadAdminPanel();
       } catch (error) {
-        showToast('Error creating voucher', 'error');
+        console.error('Voucher creation error:', error);
+        showToast('Error creating voucher: ' + error.message, 'error');
       }
     };
 
@@ -3238,7 +3564,7 @@
     - coins, lastDailyClaim
     - billing: {name, address, phone}
     - suspended: boolean
-    - vouchersUsed: array
+    - vouchersUsed: {voucherCode: usageCount}
   
   sellers/{uid}:
     - sellerName, shopName, contactNumber, email
@@ -3250,7 +3576,7 @@
     - active, ratings: [{uid, username, rating, comment, createdAt}]
   
   orders/{orderId}:
-    - uid, items, subtotal, discount, voucherCode, total
+    - uid, items, subtotal, discount, voucherCode, shippingFee, total
     - billingSnapshot, paymentMethod, paymentInfo
     - status: pending|completed|cancelled
     - cancelReason, cancelledAt
@@ -3260,6 +3586,11 @@
     - amount, minSpend
     - active, expiresAt
     - usageLimit, perUserLimit, usedCount
+  
+  settings/shipping:
+    - freeShipping: boolean
+    - codFee: number
+    - updatedAt
   
   -->
 </body>
