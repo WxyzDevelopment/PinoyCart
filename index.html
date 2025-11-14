@@ -849,7 +849,6 @@
       </svg>
       <span>Home</span>
     </button>
-    
     <button class="nav-item" onclick="showSection('cart')">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="9" cy="21" r="1"/>
@@ -1548,7 +1547,16 @@
       }
 
       try {
-        await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        
+        // Check if user is suspended
+        const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
+        if (userDoc.exists() && userDoc.data().suspended) {
+          await signOut(auth);
+          showToast('Your account has been suspended. Please contact support.', 'error');
+          return;
+        }
+        
         showToast('Logged in successfully!', 'success');
         showSection('home');
       } catch (error) {
@@ -1575,6 +1583,11 @@
             items: [],
             updatedAt: serverTimestamp()
           });
+        } else if (userDoc.data().suspended) {
+          // Check if user is suspended
+          await signOut(auth);
+          showToast('Your account has been suspended. Please contact support.', 'error');
+          return;
         }
 
         showToast('Logged in successfully!', 'success');
@@ -1771,6 +1784,14 @@
     window.addToCart = async (productId) => {
       if (!currentUser) {
         showToast('Please login to add items to cart', 'error');
+        showSection('auth');
+        return;
+      }
+
+      // Check if user is suspended
+      if (userProfile?.suspended) {
+        await signOut(auth);
+        showToast('Your account has been suspended. Please contact support.', 'error');
         showSection('auth');
         return;
       }
@@ -2258,6 +2279,14 @@
 
       if (!paymentMethod) {
         showToast('Please select a payment method', 'error');
+        return;
+      }
+
+      // Check if user is suspended before placing order
+      if (userProfile?.suspended) {
+        await signOut(auth);
+        showToast('Your account has been suspended. Please contact support.', 'error');
+        showSection('auth');
         return;
       }
 
@@ -3320,6 +3349,12 @@
         });
 
         showToast(`User ${suspend ? 'suspended' : 'unsuspended'} successfully`, 'success');
+        
+        // If suspending, check if user is currently logged in and force logout
+        if (suspend) {
+          showToast('User will be logged out on their next action', 'info');
+        }
+        
         loadAdminPanel();
       } catch (error) {
         showToast('Error updating user status', 'error');
@@ -3493,6 +3528,15 @@
       if (user) {
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         userProfile = userDoc.data();
+        
+        // Check if user is suspended
+        if (userProfile?.suspended) {
+          await signOut(auth);
+          showToast('Your account has been suspended. Please contact support.', 'error');
+          showSection('auth');
+          return;
+        }
+        
         updateCartBadge();
       } else {
         userProfile = null;
